@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Βάχλας Κωνσταντίνος — Γραφείο Τελετών</title>
-    <style>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=zdbkBx12mOrtf3MU8NfRJWzu2q0uYECbgJlUEC15aiEoPkkFdfVKtprIYQW1b6nIp9mxrPpWvyRRI-MfzFQ3UFDd6C7adeCLRGS__SLM5YXof9WOA9azIExlF6F4yYQcc1qzuqzdQGVv-LUAJUCf3DlaMa02cBck4Ugr-JBCqBAL7vU-eLGyJ_FGH5QffFD5xIOixACgZaXy8PnVxtrWszSb4UR4cTxJgS_1lpduKxMFsL7XNRCRFD8oIyYAvPUG4KnyuoxA4ask2ydPakD6mA" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jaGF0Z3B0LmNvbS9iYWNrZW5kLWFwaS9lc3R1YXJ5L2NvbnRlbnQ_aWQ9ZmlsZV8wMDAwMDAwMDFjY2M4MjEwODIyODk1YjFlMTZjNDg3ZCZ0cz00OTY2NzMmcD1mcyZjaWQ9MSZzaWc9MjY2YzBlNmNkMzVkYjhmYmZmNWNlYjFhZTNjODc0MTU4MDM0YTJmZDRkMjg5MWI0NjcwNmM0ZWQ2NTU4YmY1YSZ2PTA"/><style>
       :root {
         --ivory: #faf6ef;
         --ivory-2: #f1eae0;
@@ -1343,6 +1343,13 @@
           >
             Ραντεβού
           </div>
+          <div
+            class="admin-tab"
+            data-panel="reports"
+            onclick="setAdminTab('reports')"
+          >
+            Αναφορές
+          </div>
           <div class="admin-tab" data-panel="messages" onclick="setAdminTab('messages')">
             Μηνύματα <span id="messages-count" style="display:none;margin-left:5px;background:#b5544a;color:white;border-radius:10px;padding:1px 6px;font-size:11px;"></span>
           </div>
@@ -1461,13 +1468,15 @@
                 </div>
                 <div class="form-row full">
                   <div>
-                    <label>Προκαταβολές (€)</label
+                    <label>Σύνολο πληρωμών τελετών (€)</label
                     ><input
                       type="number"
                       step="0.01"
                       id="c-deposit"
                       placeholder="0.00"
+                      readonly
                     />
+                    <div style="font-size:12.5px;color:var(--ink-soft);margin-top:6px;">Υπολογίζεται αυτόματα από τις προκαταβολές των τελετών.</div>
                   </div>
                 </div>
                 <div
@@ -1646,6 +1655,52 @@
               >
                 Δεν υπάρχουν προγραμματισμένα ραντεβού.
               </div>
+            </div>
+          </div>
+          <!-- Ceremony reports -->
+          <div class="admin-panel" id="panel-reports">
+            <h2>Αναφορά τελετών</h2>
+            <p class="sub">
+              Χρεώσεις τελετών και πληρωμές «Έναντι λογαριασμού» ενεργών και αρχειοθετημένων οικογενειών για το επιλεγμένο διάστημα.
+            </p>
+            <div class="panel-box">
+              <div class="form-row" style="align-items:end;">
+                <div>
+                  <label>Από ημερομηνία</label>
+                  <input type="date" id="report-date-from" />
+                </div>
+                <div>
+                  <label>Έως ημερομηνία</label>
+                  <input type="date" id="report-date-to" />
+                </div>
+              </div>
+              <button class="add-btn" onclick="generateCeremonyReport()">Προβολή αναφοράς</button>
+              <button class="add-btn" id="report-excel-btn" style="display:none;background:var(--olive-dark);" onclick="exportCeremonyReportExcel()">Εξαγωγή σε Excel</button>
+              <button class="add-btn" id="report-print-btn" style="display:none;background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);" onclick="printCeremonyReport()">Εκτύπωση</button>
+              <div id="report-message" style="display:none;margin-top:12px;font-size:13.5px;"></div>
+            </div>
+            <div class="panel-box" id="report-results-box" style="display:none;">
+              <div id="report-print-area">
+                <h3 id="report-title">Αναφορά τελετών</h3>
+                <div style="overflow-x:auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Ημερομηνία &amp; ώρα</th>
+                        <th>Είδος εγγραφής</th>
+                        <th>Οικογένεια</th>
+                        <th>Θανών/Θανούσα</th>
+                        <th>Χρέωση</th>
+                        <th>Πληρωμές</th>
+                        <th>Υπόλοιπο</th>
+                      </tr>
+                    </thead>
+                    <tbody id="report-tbody"></tbody>
+                    <tfoot id="report-tfoot"></tfoot>
+                  </table>
+                </div>
+              </div>
+              <div class="empty-note" id="report-empty" style="display:none;">Δεν βρέθηκαν τελετές ή πληρωμές στο επιλεγμένο διάστημα.</div>
             </div>
           </div>
           <!-- Contact messages -->
@@ -1964,6 +2019,7 @@
         if (name !== "users") cancelManagedUserEdit();
         if (name !== "messages") cancelContactMessageEdit();
         if (name === "messages") renderContactMessages();
+        if (name === "reports") ensureReportDates();
         if (name === "safety") renderServiceTypes();
       }
       function rowRequestsEdit(event) {
@@ -2007,7 +2063,7 @@
         const { data, error } = await sb
           .from("families")
           .select(
-            "id,created_at,family_name,deceased_name,contact_name,phone,email,address,notes,advance_payment,is_archived,archived_at,last_modified_by,last_editor:user_profiles!families_last_modified_by_fkey(user_number,full_name),services(id,created_at,family_id,service_type,service_datetime,place,price,notes,status,last_modified_by,last_editor:user_profiles!services_last_modified_by_fkey(user_number,full_name))",
+            "id,created_at,family_name,deceased_name,contact_name,phone,email,address,notes,advance_payment,is_archived,archived_at,last_modified_by,last_editor:user_profiles!families_last_modified_by_fkey(user_number,full_name),services(id,created_at,family_id,service_type,service_datetime,place,price,notes,status,last_modified_by,last_editor:user_profiles!services_last_modified_by_fkey(user_number,full_name),payments:service_payments(id,payment_date,amount,reason))",
           )
           .order("family_name", { ascending: true });
         if (error) {
@@ -2039,6 +2095,12 @@
             _serviceDatetime: x.service_datetime || null,
             place: x.place || "",
             price: Number(x.price || 0),
+            payments: (x.payments || []).map((payment) => ({
+              id: Number(payment.id),
+              date: payment.payment_date ? String(payment.payment_date).slice(0, 10) : "",
+              amount: Number(payment.amount || 0),
+              reason: payment.reason || "Έναντι λογαριασμού",
+            })),
             notes: x.notes || "",
             status: x.status || "pending",
             lastModifiedById: x.last_modified_by || null,
@@ -2072,6 +2134,11 @@
         }
 
         const familyRows = arr.map((c) => {
+          const serviceAdvances = (c.services || []).reduce(
+            (sum, service) => sum + (service.payments || []).reduce(
+              (paymentSum, payment) => paymentSum + Number(payment.amount || 0), 0),
+            0,
+          );
           const row = {
             id: c.id,
             family_name: c.name || "",
@@ -2081,7 +2148,7 @@
             email: c._email || null,
             address: c._address || null,
             notes: c.notes || null,
-            advance_payment: Number(c.deposit || 0),
+            advance_payment: serviceAdvances,
             is_archived: !!c.isArchived,
             archived_at: c.archivedAt || null,
           };
@@ -2124,6 +2191,36 @@
               .from("services")
               .upsert(serviceRows, { onConflict: "id" });
             if (serviceError) throw serviceError;
+          }
+
+          const serviceIds = (c.services || []).map((service) => Number(service.id));
+          if (serviceIds.length) {
+            const paymentRows = (c.services || []).flatMap((service) =>
+              (service.payments || []).map((payment) => ({
+                id: Number(payment.id),
+                service_id: Number(service.id),
+                payment_date: payment.date || new Date().toISOString().slice(0, 10),
+                amount: Number(payment.amount || 0),
+                reason: payment.reason || "Έναντι λογαριασμού",
+              })),
+            );
+            const { data: storedPayments, error: storedPaymentsError } = await sb
+              .from("service_payments").select("id").in("service_id", serviceIds);
+            if (storedPaymentsError) throw storedPaymentsError;
+            const wantedIds = new Set(paymentRows.map((payment) => Number(payment.id)));
+            const removedIds = (storedPayments || [])
+              .map((payment) => Number(payment.id))
+              .filter((id) => !wantedIds.has(id));
+            if (removedIds.length) {
+              const { error: deletePaymentsError } = await sb
+                .from("service_payments").delete().in("id", removedIds);
+              if (deletePaymentsError) throw deletePaymentsError;
+            }
+            if (paymentRows.length) {
+              const { error: paymentsError } = await sb
+                .from("service_payments").upsert(paymentRows, { onConflict: "id" });
+              if (paymentsError) throw paymentsError;
+            }
           }
         }
       }
@@ -2181,8 +2278,19 @@
         is_active: true,
         sort_order: (index + 1) * 10,
       }));
+      function servicePaymentsTotal(service) {
+        return (service && service.payments || []).reduce(
+          (sum, payment) => sum + (parseFloat(payment.amount) || 0),
+          0,
+        );
+      }
       function recalcBalance() {
-        /* Τα οικονομικά προκύπτουν από τις τελετές. */
+        const totalAdvance = draftServices.reduce(
+          (sum, service) => sum + servicePaymentsTotal(service),
+          0,
+        );
+        const field = document.getElementById("c-deposit");
+        if (field) field.value = totalAdvance ? totalAdvance.toFixed(2) : "";
       }
       function openAddClientForm() {
         editingClientId = null;
@@ -2207,6 +2315,41 @@
         renderDraftServices();
         document.getElementById("c-name").focus();
       }
+      function paymentRowHTML(prefix, payment) {
+        const id = Number(payment && payment.id) || Date.now() + Math.floor(Math.random() * 1000);
+        const date = payment && payment.date ? payment.date : new Date().toISOString().slice(0, 10);
+        const amount = payment && payment.amount ? payment.amount : "";
+        return `<tr data-payment-id="${id}">
+          <td><input type="date" class="${prefix}-payment-date" value="${date}"></td>
+          <td><input type="number" min="0.01" step="0.01" class="${prefix}-payment-amount" value="${amount}" placeholder="0.00"></td>
+          <td><input class="${prefix}-payment-reason" value="Έναντι λογαριασμού" readonly></td>
+          <td><button type="button" class="del-btn" style="color:#b5544a;" onclick="this.closest('tr').remove()">Διαγραφή</button></td>
+        </tr>`;
+      }
+      function paymentEditorHTML(prefix, payments) {
+        return `<div style="border-top:1px solid var(--line);margin-top:16px;padding-top:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+            <label style="margin:0;">Πληρωμές τελετής</label>
+            <button type="button" class="mini-add-btn" onclick="addPaymentRow('${prefix}')">+ Νέα πληρωμή</button>
+          </div>
+          <div style="overflow-x:auto;"><table><thead><tr><th>Ημερομηνία</th><th>Ποσό</th><th>Αιτιολογία</th><th></th></tr></thead>
+          <tbody id="${prefix}-payments">${(payments || []).map((payment) => paymentRowHTML(prefix, payment)).join("")}</tbody></table></div>
+        </div>`;
+      }
+      function addPaymentRow(prefix) {
+        const tbody = document.getElementById(`${prefix}-payments`);
+        if (tbody) tbody.insertAdjacentHTML("beforeend", paymentRowHTML(prefix, null));
+      }
+      function collectPaymentRows(prefix) {
+        const tbody = document.getElementById(`${prefix}-payments`);
+        if (!tbody) return [];
+        return Array.from(tbody.querySelectorAll("tr")).map((row) => ({
+          id: Number(row.dataset.paymentId),
+          date: row.querySelector(`.${prefix}-payment-date`).value,
+          amount: parseFloat(row.querySelector(`.${prefix}-payment-amount`).value) || 0,
+          reason: "Έναντι λογαριασμού",
+        })).filter((payment) => payment.date && payment.amount > 0);
+      }
       function draftServiceFormHTML(service, index) {
         const isEdit = index !== null && index !== undefined;
         return `<div class="panel-box" style="margin-top:12px;background:var(--ivory-2);">
@@ -2214,7 +2357,8 @@
  <div><label>Ημερομηνία & ώρα</label><input type="datetime-local" id="ds-datetime" value="${service ? service.datetime || "" : ""}"></div></div>
  <div class="form-row"><div><label>Τόπος (εκκλησία / κοιμητήριο)</label><input id="ds-place" value="${escapeHtml(service ? service.place || "" : "")}" placeholder="π.χ. Ι.Ν. Αγίου Νικολάου"></div>
  <div><label>Κατάσταση</label><select id="ds-status"><option value="pending" ${!service || service.status === "pending" ? "selected" : ""}>Σε προετοιμασία</option><option value="done" ${service && service.status === "done" ? "selected" : ""}>Ολοκληρώθηκε</option></select></div></div>
- <div class="form-row"><div><label>Τιμή τελετής (€)</label><input type="number" step="0.01" id="ds-price" value="${service && service.price ? service.price : ""}" placeholder="0.00"></div><div></div></div>
+ <div class="form-row"><div><label>Χρέωση τελετής (€)</label><input type="number" min="0" step="0.01" id="ds-price" value="${service && service.price ? service.price : ""}" placeholder="0.00"></div><div></div></div>
+ ${paymentEditorHTML("ds", service ? service.payments || [] : [])}
  <button type="button" class="add-btn" onclick="saveDraftService()">${isEdit ? "Αποθήκευση αλλαγών" : "Προσθήκη τελετής"}</button>
  <button type="button" class="add-btn" style="background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);" onclick="cancelDraftServiceForm()">Ακύρωση</button>
  ${isEdit ? `<button type="button" class="add-btn" style="background:#b5544a;" onclick="deleteDraftService(${index})">Διαγραφή</button>` : ""}</div>`;
@@ -2224,7 +2368,7 @@
           form = document.getElementById("draft-service-form");
         if (!list || !form) return;
         list.innerHTML = draftServices.length
-          ? `<table><thead><tr><th>Τύπος</th><th>Ημ/νία & ώρα</th><th>Τόπος</th><th>Τιμή</th><th>Κατάσταση</th><th></th><th>Χρ.</th></tr></thead><tbody>${draftServices.map((x, i) => `<tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editDraftService(${i})"><td>${escapeHtml(x.type)}</td><td>${fmtDateTime(x.datetime)}</td><td>${escapeHtml(x.place || "—")}</td><td>${fmtEuro(x.price)}</td><td><span class="badge ${x.status}">${x.status === "pending" ? "Σε προετοιμασία" : "Ολοκληρώθηκε"}</span></td><td style="white-space:nowrap;"><button type="button" class="del-btn" style="color:var(--olive-dark);margin-right:10px;" onclick="editDraftService(${i})">Επεξεργασία</button></td><td>${formatLastHandler(x.lastHandler)}</td></tr>`).join("")}</tbody></table>`
+          ? `<table><thead><tr><th>Τύπος</th><th>Ημ/νία & ώρα</th><th>Τόπος</th><th>Χρέωση</th><th>Πληρωμές</th><th>Υπόλοιπο</th><th>Κατάσταση</th><th></th><th>Χρ.</th></tr></thead><tbody>${draftServices.map((x, i) => `<tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editDraftService(${i})"><td>${escapeHtml(x.type)}</td><td>${fmtDateTime(x.datetime)}</td><td>${escapeHtml(x.place || "—")}</td><td>${fmtEuro(x.price)}</td><td>${fmtEuro(servicePaymentsTotal(x))}</td><td>${fmtEuro((parseFloat(x.price) || 0) - servicePaymentsTotal(x))}</td><td><span class="badge ${x.status}">${x.status === "pending" ? "Σε προετοιμασία" : "Ολοκληρώθηκε"}</span></td><td style="white-space:nowrap;"><button type="button" class="del-btn" style="color:var(--olive-dark);margin-right:10px;" onclick="editDraftService(${i})">Επεξεργασία</button></td><td>${formatLastHandler(x.lastHandler)}</td></tr>`).join("")}</tbody></table>`
           : '<div class="empty-note" style="padding:8px 0 4px;">Δεν έχει προστεθεί τελετή.</div>';
         form.innerHTML =
           draftServiceEditingIndex === false
@@ -2271,6 +2415,7 @@
           place: document.getElementById("ds-place").value.trim(),
           status: document.getElementById("ds-status").value,
           price: parseFloat(document.getElementById("ds-price").value) || 0,
+          payments: collectPaymentRows("ds"),
         };
         if (old) draftServices[draftServiceEditingIndex] = x;
         else draftServices.push(x);
@@ -2289,8 +2434,10 @@
         let savedClientId = editingClientId;
         let removedServiceIds = [];
         try {
-        const deposit =
-          parseFloat(document.getElementById("c-deposit").value) || 0;
+        const deposit = draftServices.reduce(
+          (sum, service) => sum + servicePaymentsTotal(service),
+          0,
+        );
         const list = await loadArr("clients");
         const wasEditing = editingClientId !== null;
         if (editingClientId !== null) {
@@ -2485,6 +2632,7 @@
           place: document.getElementById("fs-place").value.trim(),
           status: document.getElementById("fs-status").value,
           price: parseFloat(document.getElementById("fs-price").value) || 0,
+          payments: collectPaymentRows("fs"),
         };
         const list = await loadArr("clients");
         const client = list.find((c) => c.id === clientId);
@@ -2577,7 +2725,7 @@
       }
       function serviceFormHTML(client, service) {
         const isEdit = !!service;
-        return `     <div class="panel-box" style="margin-top:12px; background:var(--white);">       <div class="form-row">         <div><label>Τύπος</label><select id="fs-type">${serviceTypeOptions(service ? service.type : "Κηδεία")}</select></div>         <div><label>Ημερομηνία & ώρα</label><input type="datetime-local" id="fs-datetime" value="${service ? service.datetime : ""}"></div>       </div>       <div class="form-row">         <div><label>Τόπος (εκκλησία / κοιμητήριο)</label><input id="fs-place" placeholder="π.χ. Ι.Ν. Αγίου Νικολάου" value="${escapeHtml(service ? service.place || "" : "")}"></div>         <div><label>Κατάσταση</label>           <select id="fs-status">             <option value="pending" ${!service || service.status === "pending" ? "selected" : ""}>Σε προετοιμασία</option>             <option value="done" ${service && service.status === "done" ? "selected" : ""}>Ολοκληρώθηκε</option>           </select>         </div>       </div>       <div class="form-row">         <div><label>Τιμή τελετής (€)</label><input type="number" step="0.01" id="fs-price" placeholder="0.00" value="${service && service.price ? service.price : ""}"></div>         <div></div>       </div>       <button class="add-btn" onclick="submitFamilyService(${client.id})">${isEdit ? "Αποθήκευση αλλαγών" : "Προσθήκη τελετής"}</button>       <button class="add-btn" style="background:transparent; color:var(--ink-soft); border:1.5px solid var(--line);" onclick="closeServiceForm()">Ακύρωση</button>       ${isEdit ? `<button class="add-btn" style="background:#b5544a;" onclick="deleteFamilyService(${client.id},${service.id})">Διαγραφή</button>` : ""}     </div>`;
+        return `     <div class="panel-box" style="margin-top:12px; background:var(--white);">       <div class="form-row">         <div><label>Τύπος</label><select id="fs-type">${serviceTypeOptions(service ? service.type : "Κηδεία")}</select></div>         <div><label>Ημερομηνία & ώρα</label><input type="datetime-local" id="fs-datetime" value="${service ? service.datetime : ""}"></div>       </div>       <div class="form-row">         <div><label>Τόπος (εκκλησία / κοιμητήριο)</label><input id="fs-place" placeholder="π.χ. Ι.Ν. Αγίου Νικολάου" value="${escapeHtml(service ? service.place || "" : "")}"></div>         <div><label>Κατάσταση</label>           <select id="fs-status">             <option value="pending" ${!service || service.status === "pending" ? "selected" : ""}>Σε προετοιμασία</option>             <option value="done" ${service && service.status === "done" ? "selected" : ""}>Ολοκληρώθηκε</option>           </select>         </div>       </div>       <div class="form-row">         <div><label>Χρέωση τελετής (€)</label><input type="number" min="0" step="0.01" id="fs-price" placeholder="0.00" value="${service && service.price ? service.price : ""}"></div><div></div></div>       ${paymentEditorHTML("fs", service ? service.payments || [] : [])}       <button class="add-btn" onclick="submitFamilyService(${client.id})">${isEdit ? "Αποθήκευση αλλαγών" : "Προσθήκη τελετής"}</button>       <button class="add-btn" style="background:transparent; color:var(--ink-soft); border:1.5px solid var(--line);" onclick="closeServiceForm()">Ακύρωση</button>       ${isEdit ? `<button class="add-btn" style="background:#b5544a;" onclick="deleteFamilyService(${client.id},${service.id})">Διαγραφή</button>` : ""}     </div>`;
       }
       function familyServicesBodyHTML(client) {
         const services = (client.services || [])
@@ -2586,15 +2734,19 @@
         const rows = services
           .map(
             (s) =>
-              `     <tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) openServiceForm(${client.id},${s.id})">       <td>${escapeHtml(s.type)}</td>       <td>${fmtDateTime(s.datetime)}</td>       <td>${escapeHtml(s.place || "—")}</td>       <td>${fmtEuro(s.price)}</td>       <td><span class="badge ${s.status}" style="cursor:pointer;" onclick="toggleFamilyServiceStatus(${client.id},${s.id})">${s.status === "pending" ? "Σε προετοιμασία" : "Ολοκληρώθηκε"}</span></td>       <td style="white-space:nowrap;">         <button class="del-btn" style="color:var(--olive-dark); margin-right:10px;" onclick="openServiceForm(${client.id},${s.id})">Επεξεργασία</button>       </td>       <td>${formatLastHandler(s.lastHandler)}</td>     </tr>`,
+              `     <tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) openServiceForm(${client.id},${s.id})">       <td>${escapeHtml(s.type)}</td>       <td>${fmtDateTime(s.datetime)}</td>       <td>${escapeHtml(s.place || "—")}</td>       <td>${fmtEuro(s.price)}</td>       <td>${fmtEuro(servicePaymentsTotal(s))}</td>       <td>${fmtEuro((parseFloat(s.price) || 0) - servicePaymentsTotal(s))}</td>       <td><span class="badge ${s.status}" style="cursor:pointer;" onclick="toggleFamilyServiceStatus(${client.id},${s.id})">${s.status === "pending" ? "Σε προετοιμασία" : "Ολοκληρώθηκε"}</span></td>       <td style="white-space:nowrap;">         <button class="del-btn" style="color:var(--olive-dark); margin-right:10px;" onclick="openServiceForm(${client.id},${s.id})">Επεξεργασία</button>       </td>       <td>${formatLastHandler(s.lastHandler)}</td>     </tr>`,
           )
           .join("");
         const servicesTotal = services.reduce(
           (sum, s) => sum + (parseFloat(s.price) || 0),
           0,
         );
+        const advancesTotal = services.reduce(
+          (sum, s) => sum + servicePaymentsTotal(s),
+          0,
+        );
         const table = services.length
-          ? `     <table><thead><tr><th>Τύπος</th><th>Ημ/νία & ώρα</th><th>Τόπος</th><th>Τιμή</th><th>Κατάσταση</th><th></th><th>Χρ.</th></tr></thead>     <tbody>${rows}</tbody></table>     <div style="text-align:right; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:10px;">Σύνολο τελετών: ${fmtEuro(servicesTotal)}</div>`
+          ? `     <table><thead><tr><th>Τύπος</th><th>Ημ/νία & ώρα</th><th>Τόπος</th><th>Χρέωση</th><th>Πληρωμές</th><th>Υπόλοιπο</th><th>Κατάσταση</th><th></th><th>Χρ.</th></tr></thead>     <tbody>${rows}</tbody></table>     <div style="text-align:right; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:10px;">Χρεώσεις: ${fmtEuro(servicesTotal)} · Πληρωμές: ${fmtEuro(advancesTotal)} · Υπόλοιπο: ${fmtEuro(servicesTotal - advancesTotal)}</div>`
           : `<div class="empty-note">Δεν έχουν καταχωρηθεί τελετές για αυτή την οικογένεια.</div>`;
         const showForm = serviceFormClientId === client.id;
         const editingService =
@@ -2686,15 +2838,19 @@
               (sum, s) => sum + (parseFloat(s.price) || 0),
               0,
             );
+            const advancesTotal = services.reduce(
+              (sum, s) => sum + servicePaymentsTotal(s),
+              0,
+            );
             const totalCost = servicesTotal;
-            const finalBalance = totalCost - (parseFloat(c.deposit) || 0);
+            const finalBalance = totalCost - advancesTotal;
             return `<tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editClient(${c.id})">
       <td><strong>${escapeHtml(c.name || "—")}</strong></td>
       <td>${escapeHtml(c.phone || "—")}</td>
       <td>${escapeHtml(c.deceased || "—")}</td>
       <td>${fmtDate(c.date)}</td>
       <td>${fmtEuro(totalCost)}</td>
-      <td>${fmtEuro(c.deposit)}</td>
+      <td>${fmtEuro(advancesTotal)}</td>
       <td><strong>${fmtEuro(finalBalance)}</strong></td>
       <td>${services.length}</td>
       <td class="notes-cell" title="${escapeHtml(c.notes || "")}">${escapeHtml(c.notes || "—")}</td>
@@ -2862,6 +3018,218 @@
         document.getElementById("appointment-delete-btn").style.display =
           "none";
       }
+      let ceremonyReportRows = [];
+
+      function ensureReportDates() {
+        const from = document.getElementById("report-date-from");
+        const to = document.getElementById("report-date-to");
+        if (!from || !to || (from.value && to.value)) return;
+        const now = new Date();
+        const localDate = (date) => {
+          const shifted = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+          return shifted.toISOString().slice(0, 10);
+        };
+        from.value = localDate(new Date(now.getFullYear(), now.getMonth(), 1));
+        to.value = localDate(new Date(now.getFullYear(), now.getMonth() + 1, 0));
+      }
+
+      function buildCeremonyReportRows(families, dateFrom, dateTo) {
+        const rows = [];
+        (families || []).forEach((family) => {
+          const familyEvents = [];
+          (family.services || []).forEach((service) => {
+            if (service.datetime) {
+              familyEvents.push({
+                sortDate: service.datetime,
+                displayDate: service.datetime,
+                type: `Τελετή — ${service.type || ""}`,
+                charge: Math.max(0, Number(service.price || 0)),
+                payment: 0,
+                sortOrder: 0,
+              });
+            }
+            (service.payments || []).forEach((payment) => {
+              if (!payment.date || Number(payment.amount || 0) <= 0) return;
+              familyEvents.push({
+                sortDate: `${payment.date}T23:59:00`,
+                displayDate: payment.date,
+                type: payment.reason || "Έναντι λογαριασμού",
+                charge: 0,
+                payment: Math.max(0, Number(payment.amount || 0)),
+                sortOrder: 1,
+              });
+            });
+          });
+          familyEvents.sort((a, b) =>
+            String(a.sortDate).localeCompare(String(b.sortDate)) || a.sortOrder - b.sortOrder,
+          );
+          let familyBalance = 0;
+          familyEvents.forEach((event) => {
+            familyBalance += event.charge - event.payment;
+            const eventDate = String(event.sortDate).slice(0, 10);
+            if (eventDate < dateFrom || eventDate > dateTo) return;
+            rows.push({
+              datetime: event.displayDate,
+              sortDate: event.sortDate,
+              type: event.type,
+              family: family.name || "",
+              deceased: family.deceased || "",
+              charge: event.charge,
+              deposit: event.payment,
+              balance: familyBalance,
+            });
+          });
+        });
+        return rows.sort((a, b) =>
+          String(a.sortDate).localeCompare(String(b.sortDate)) ||
+          String(a.family).localeCompare(String(b.family), "el"),
+        );
+      }
+
+      async function generateCeremonyReport() {
+        const from = document.getElementById("report-date-from").value;
+        const to = document.getElementById("report-date-to").value;
+        const message = document.getElementById("report-message");
+        message.style.display = "none";
+        if (!from || !to) {
+          message.textContent = "Επιλέξτε και τις δύο ημερομηνίες.";
+          message.style.color = "#b5544a";
+          message.style.display = "block";
+          return;
+        }
+        if (from > to) {
+          message.textContent = "Η ημερομηνία «Από» πρέπει να είναι πριν από την ημερομηνία «Έως».";
+          message.style.color = "#b5544a";
+          message.style.display = "block";
+          return;
+        }
+        try {
+          const families = await loadArr("clients");
+          ceremonyReportRows = buildCeremonyReportRows(families, from, to);
+          renderCeremonyReport(from, to);
+        } catch (error) {
+          console.error("Ceremony report error:", error);
+          message.textContent = "Δεν ήταν δυνατή η δημιουργία της αναφοράς.";
+          message.style.color = "#b5544a";
+          message.style.display = "block";
+        }
+      }
+
+      function reportDateLabel(value) {
+        if (!value) return "";
+        const [year, month, day] = value.split("-");
+        return `${day}/${month}/${year}`;
+      }
+      function fmtReportEventDate(value) {
+        return String(value || "").length === 10 ? fmtDate(value) : fmtDateTime(value);
+      }
+
+      function renderCeremonyReport(from, to) {
+        const box = document.getElementById("report-results-box");
+        const empty = document.getElementById("report-empty");
+        const tbody = document.getElementById("report-tbody");
+        const tfoot = document.getElementById("report-tfoot");
+        const title = `Οικονομική αναφορά ${reportDateLabel(from)} – ${reportDateLabel(to)}`;
+        document.getElementById("report-title").textContent = title;
+        box.style.display = "block";
+        empty.style.display = ceremonyReportRows.length ? "none" : "block";
+        tbody.innerHTML = ceremonyReportRows.map((row) => `
+          <tr>
+            <td>${fmtReportEventDate(row.datetime)}</td>
+            <td>${escapeHtml(row.type || "—")}</td>
+            <td>${escapeHtml(row.family || "—")}</td>
+            <td>${escapeHtml(row.deceased || "—")}</td>
+            <td>${fmtEuro(row.charge)}</td>
+            <td>${fmtEuro(row.deposit)}</td>
+            <td>${fmtEuro(row.balance)}</td>
+          </tr>`).join("");
+        const totals = ceremonyReportRows.reduce((sum, row) => ({
+          charge: sum.charge + row.charge,
+          deposit: sum.deposit + row.deposit,
+        }), { charge: 0, deposit: 0 });
+        tfoot.innerHTML = ceremonyReportRows.length ? `
+          <tr style="font-weight:700;border-top:2px solid var(--line);">
+            <td colspan="4">Σύνολα περιόδου (${ceremonyReportRows.length} εγγραφές)</td>
+            <td>${fmtEuro(totals.charge)}</td>
+            <td>${fmtEuro(totals.deposit)}</td>
+            <td title="Καθαρή μεταβολή περιόδου">${fmtEuro(totals.charge - totals.deposit)}</td>
+          </tr>` : "";
+        document.getElementById("report-excel-btn").style.display = ceremonyReportRows.length ? "inline-block" : "none";
+        document.getElementById("report-print-btn").style.display = ceremonyReportRows.length ? "inline-block" : "none";
+      }
+
+      function xmlEscape(value) {
+        return String(value ?? "").replace(/[&<>\"']/g, (char) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '\"': "&quot;", "'": "&apos;",
+        })[char]);
+      }
+
+      function exportCeremonyReportExcel() {
+        if (!ceremonyReportRows.length) return;
+        const from = document.getElementById("report-date-from").value;
+        const to = document.getElementById("report-date-to").value;
+        const totals = ceremonyReportRows.reduce((sum, row) => ({
+          charge: sum.charge + row.charge,
+          deposit: sum.deposit + row.deposit,
+        }), { charge: 0, deposit: 0 });
+        const textCell = (value) => `<Cell><Data ss:Type="String">${xmlEscape(value)}</Data></Cell>`;
+        const numberCell = (value) => `<Cell ss:StyleID="Currency"><Data ss:Type="Number">${Number(value || 0)}</Data></Cell>`;
+        const dataRows = ceremonyReportRows.map((row) => `<Row>
+          ${textCell(fmtReportEventDate(row.datetime))}${textCell(row.type)}${textCell(row.family)}${textCell(row.deceased)}
+          ${numberCell(row.charge)}${numberCell(row.deposit)}${numberCell(row.balance)}
+        </Row>`).join("");
+        const xml = `<?xml version="1.0" encoding="UTF-8"?>
+          <?mso-application progid="Excel.Sheet"?>
+          <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:x="urn:schemas-microsoft-com:office:excel"
+            xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+            <Styles>
+              <Style ss:ID="Header"><Font ss:Bold="1"/><Interior ss:Color="#E9E3D8" ss:Pattern="Solid"/></Style>
+              <Style ss:ID="Currency"><NumberFormat ss:Format="#,##0.00 [$€-el-GR]"/></Style>
+              <Style ss:ID="Total"><Font ss:Bold="1"/></Style>
+            </Styles>
+            <Worksheet ss:Name="Τελετές"><Table>
+              <Column ss:Width="130"/><Column ss:Width="160"/><Column ss:Width="150"/><Column ss:Width="150"/>
+              <Column ss:Width="85"/><Column ss:Width="95"/><Column ss:Width="85"/>
+              <Row><Cell ss:MergeAcross="6" ss:StyleID="Header"><Data ss:Type="String">${xmlEscape(`Οικονομική αναφορά ${reportDateLabel(from)} – ${reportDateLabel(to)}`)}</Data></Cell></Row>
+              <Row ss:StyleID="Header">${textCell("Ημερομηνία & ώρα")}${textCell("Είδος εγγραφής")}${textCell("Οικογένεια")}${textCell("Θανών/Θανούσα")}${textCell("Χρέωση")}${textCell("Πληρωμές")}${textCell("Υπόλοιπο οικογένειας")}</Row>
+              ${dataRows}
+              <Row ss:StyleID="Total">${textCell(`Σύνολα περιόδου (${ceremonyReportRows.length} εγγραφές)`)}<Cell/><Cell/><Cell/>${numberCell(totals.charge)}${numberCell(totals.deposit)}${numberCell(totals.charge - totals.deposit)}</Row>
+            </Table></Worksheet>
+          </Workbook>`;
+        const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `αναφορά-τελετών_${from}_${to}.xls`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function printCeremonyReport() {
+        if (!ceremonyReportRows.length) return;
+        const area = document.getElementById("report-print-area");
+        const popup = window.open("", "_blank", "width=1100,height=750");
+        if (!popup) {
+          const message = document.getElementById("report-message");
+          message.textContent = "Ο browser εμπόδισε το παράθυρο εκτύπωσης. Επιτρέψτε τα αναδυόμενα παράθυρα και δοκιμάστε ξανά.";
+          message.style.color = "#b5544a";
+          message.style.display = "block";
+          return;
+        }
+        popup.document.write(`<!doctype html><html lang="el"><head><meta charset="utf-8"><title>${escapeHtml(document.getElementById("report-title").textContent)}</title><style>
+          body{font-family:Arial,sans-serif;color:#222;margin:28px}h3{text-align:center;margin-bottom:22px}
+          table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #aaa;padding:8px;text-align:left}
+          th{background:#eee}tfoot{font-weight:bold}@page{size:A4 landscape;margin:12mm}
+        </style></head><body>${area.innerHTML}</body></html>`);
+        popup.document.close();
+        popup.focus();
+        setTimeout(() => { popup.print(); }, 250);
+      }
+
       async function renderAppointments() {
         let list = await loadArr("appointments");
         const families = await loadArr("clients");
@@ -3411,17 +3779,18 @@
         try {
           const queries = await Promise.all([
             sb.from("families").select("id,created_at,family_name,deceased_name,contact_name,phone,email,address,notes,advance_payment,is_archived,archived_at"),
-            sb.from("services").select("id,created_at,family_id,service_type,service_datetime,place,price,notes,status"),
+            sb.from("services").select("id,created_at,family_id,service_type,service_datetime,place,price,advance_payment,notes,status"),
             sb.from("appointments").select("id,created_at,family,appointment_datetime,purpose,phone"),
             sb.from("contact_messages").select("id,created_at,name,phone,email,subject,message,is_read,read_at"),
             sb.from("app_settings").select("key,value,updated_at"),
             sb.from("service_types").select("id,name,is_active,sort_order,created_at"),
+            sb.from("service_payments").select("id,created_at,service_id,payment_date,amount,reason"),
           ]);
           const failed = queries.find((result) => result.error);
           if (failed) throw failed.error;
           const backup = {
             format: "vachlas-backup",
-            version: 1,
+            version: 2,
             created_at: new Date().toISOString(),
             data: {
               families: queries[0].data || [],
@@ -3430,6 +3799,7 @@
               contact_messages: queries[3].data || [],
               app_settings: queries[4].data || [],
               service_types: queries[5].data || [],
+              service_payments: queries[6].data || [],
             },
           };
           const stamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, "-");
@@ -3496,13 +3866,15 @@
         try {
           const data = selectedBackup.data;
           const families = cleanBackupRows(data.families, ["id","created_at","family_name","deceased_name","contact_name","phone","email","address","notes","advance_payment","is_archived","archived_at"]);
-          const services = cleanBackupRows(data.services, ["id","created_at","family_id","service_type","service_datetime","place","price","notes","status"]);
+          const services = cleanBackupRows(data.services, ["id","created_at","family_id","service_type","service_datetime","place","price","advance_payment","notes","status"]);
+          const servicePayments = cleanBackupRows(data.service_payments || [], ["id","created_at","service_id","payment_date","amount","reason"]);
           const appointments = cleanBackupRows(data.appointments, ["id","created_at","family","appointment_datetime","purpose","phone"]);
           const messages = cleanBackupRows(data.contact_messages, ["id","created_at","name","phone","email","subject","message","is_read","read_at"]);
           const settings = cleanBackupRows(data.app_settings, ["key","value","updated_at"]).map((row) => ({ ...row, updated_by: currentUserProfile.user_id }));
           const types = cleanBackupRows(data.service_types, ["id","name","is_active","sort_order","created_at"]).map((row) => ({ ...row, created_by: currentUserProfile.user_id }));
           await upsertBackupRows("families", families, "id");
           await upsertBackupRows("services", services, "id");
+          await upsertBackupRows("service_payments", servicePayments, "id");
           await upsertBackupRows("appointments", appointments, "id");
           await upsertBackupRows("contact_messages", messages, "id");
           await upsertBackupRows("app_settings", settings, "key");

@@ -1,0 +1,3581 @@
+<!doctype html>
+<html lang="el">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Βάχλας Κωνσταντίνος — Γραφείο Τελετών</title>
+    <style>
+      :root {
+        --ivory: #faf6ef;
+        --ivory-2: #f1eae0;
+        --ink: #2a241e;
+        --ink-soft: #5a5148;
+        --olive: #c79a4b;
+        --olive-dark: #9c7530;
+        --gold: #e7cb8e;
+        --gold-soft: #f2e2b8;
+        --line: #e0d6c4;
+        --white: #fffdf9;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--ivory);
+        color: var(--ink);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      h1,
+      h2,
+      h3,
+      .serif {
+        font-family: Georgia, "Times New Roman", serif;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        max-width: 100%;
+      }
+      .container {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 28px;
+      }
+      ::selection {
+        background: var(--gold-soft);
+        color: var(--ink);
+      }
+      :focus-visible {
+        outline: 2px solid var(--olive);
+        outline-offset: 3px;
+      } /* ---- Mode switcher ---- */
+      .mode-switch {
+        position: fixed;
+        top: 14px;
+        right: 14px;
+        z-index: 200;
+        display: flex;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px;
+        gap: 4px;
+        box-shadow: 0 4px 16px rgba(42, 36, 30, 0.08);
+      }
+      .mode-switch button {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: none;
+        background: transparent;
+        color: var(--ink-soft);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .mode-switch button.active {
+        background: var(--olive);
+        color: var(--white);
+      } /* ================= PUBLIC SITE ================= */
+      #site {
+        display: block;
+      }
+      header.top {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(250, 246, 239, 0.92);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 28px;
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+      .brand {
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: 600;
+        font-size: 19px;
+        letter-spacing: 0.2px;
+      }
+      .brand span {
+        color: var(--olive);
+        font-style: italic;
+        font-weight: 400;
+      }
+      nav.links {
+        display: flex;
+        gap: 30px;
+        font-size: 14.5px;
+        font-weight: 500;
+      }
+      nav.links a {
+        color: var(--ink-soft);
+        transition: color 0.2s;
+      }
+      nav.links a:hover {
+        color: var(--olive-dark);
+      }
+      .phone-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--olive);
+        color: var(--white);
+        padding: 9px 16px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+      } /* Hero */
+      .mobile-phone-link { display: none !important; }
+      .desktop-phone-text { display: inline-flex; }
+      a.mobile-phone-link { text-decoration: none; }
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 100px 28px 90px;
+        text-align: center;
+        background-image: url("sky-background.png");
+        background-position: center 42%;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(250, 246, 239, 0.42) 0%,
+          rgba(250, 246, 239, 0.57) 54%,
+          rgba(250, 246, 239, 0.91) 100%
+        );
+        pointer-events: none;
+      }
+      .glow {
+        position: absolute;
+        top: -120px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 520px;
+        height: 520px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(184, 147, 90, 0.35) 0%,
+          rgba(184, 147, 90, 0) 68%
+        );
+        animation: flicker 6s ease-in-out infinite;
+        pointer-events: none;
+      }
+      @keyframes flicker {
+        0%,
+        100% {
+          opacity: 0.75;
+          transform: translateX(-50%) scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(-50%) scale(1.06);
+        }
+      }
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 680px;
+        margin: 0 auto;
+      }
+      .eyebrow {
+        font-size: 13px;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: var(--olive-dark);
+        font-weight: 600;
+        margin-bottom: 22px;
+        display: block;
+      }
+      .hero h1 {
+        font-size: clamp(32px, 5vw, 52px);
+        font-weight: 500;
+        line-height: 1.25;
+        color: var(--ink);
+        margin-bottom: 22px;
+      }
+      .hero h1 em {
+        font-style: italic;
+        color: var(--olive-dark);
+      }
+      .hero p {
+        font-size: 17px;
+        color: var(--ink-soft);
+        max-width: 520px;
+        margin: 0 auto 36px;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 14px 26px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+      }
+      .btn-primary {
+        background: var(--olive);
+        color: var(--white);
+      }
+      .btn-primary:hover {
+        background: var(--olive-dark);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--ink);
+        border: 1.5px solid var(--line);
+      }
+      .btn-ghost:hover {
+        border-color: var(--olive);
+      }
+      .branch {
+        position: relative;
+        z-index: 1;
+        width: 220px;
+        margin: 56px auto 0;
+        opacity: 0.55;
+      } /* Sections */
+      section {
+        padding: 88px 0;
+      }
+      #epikoinonia {
+        padding-top: 36px;
+      }
+      .section-head {
+        max-width: 560px;
+        margin: 0 auto 56px;
+        text-align: center;
+      }
+      .section-head .eyebrow {
+        margin-bottom: 14px;
+      }
+      .section-head h2 {
+        font-size: clamp(26px, 3.4vw, 36px);
+        font-weight: 500;
+      }
+      .section-head p {
+        color: var(--ink-soft);
+        margin-top: 14px;
+        font-size: 15.5px;
+      }
+      .services {
+        background: var(--white);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+      .card {
+        background: var(--ivory-2);
+        border-radius: 14px;
+        padding: 32px 26px;
+        border: 1px solid var(--line);
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+      }
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(42, 36, 30, 0.07);
+      }
+      .card .icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 10px;
+        background: var(--olive);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+        color: var(--white);
+      }
+      .card h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .card p {
+        font-size: 14.5px;
+        color: var(--ink-soft);
+      } /* Process */
+      .process-list {
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      .step {
+        display: flex;
+        gap: 24px;
+        padding: 26px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .step:last-child {
+        border-bottom: none;
+      }
+      .step .num {
+        font-family: Georgia, "Times New Roman", serif;
+        font-style: italic;
+        font-size: 26px;
+        color: var(--gold);
+        min-width: 44px;
+      }
+      .step h3 {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .step p {
+        font-size: 14.5px;
+        color: var(--ink-soft);
+      } /* About */
+      .about {
+        background: var(--white);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 64px;
+        align-items: center;
+      }
+      .about-text .eyebrow {
+        margin-bottom: 14px;
+      }
+      .about-text h2 {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 500;
+        margin-bottom: 18px;
+      }
+      .about-text p {
+        color: var(--ink-soft);
+        font-size: 15.5px;
+        margin-bottom: 16px;
+      }
+      .values {
+        display: flex;
+        gap: 28px;
+        margin-top: 28px;
+        flex-wrap: wrap;
+      }
+      .value b {
+        display: block;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 15px;
+        color: var(--olive-dark);
+        margin-bottom: 4px;
+      }
+      .value span {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+      }
+      .about-panel {
+        background: var(--ivory-2);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 40px;
+        position: relative;
+      }
+      .about-panel .quote {
+        font-family: Georgia, "Times New Roman", serif;
+        font-style: italic;
+        font-size: 19px;
+        color: var(--ink);
+        line-height: 1.6;
+      }
+      .about-panel .who {
+        margin-top: 18px;
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        font-weight: 600;
+      } /* Contact */
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 40px;
+      }
+      .contact-card {
+        background: var(--olive);
+        color: var(--white);
+        border-radius: 18px;
+        padding: 42px;
+      }
+      .contact-card .eyebrow {
+        color: var(--gold-soft);
+      }
+      .contact-card h2 {
+        font-size: 26px;
+        font-weight: 500;
+        margin-bottom: 14px;
+      }
+      .contact-card p {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 14.5px;
+        margin-bottom: 24px;
+      }
+      .big-phone {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: block;
+      }
+      .contact-details {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 42px;
+      }
+      .contact-form {
+        grid-column: 1 / -1;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 42px;
+      }
+      .contact-form h3 { font-size: 23px; font-weight: 500; margin-bottom: 8px; }
+      .contact-form > p { color: var(--ink-soft); margin-bottom: 24px; font-size: 14.5px; }
+      .contact-form textarea { min-height: 130px; resize: vertical; }
+      .contact-form-message { display:none; margin-top:14px; font-weight:600; font-size:14px; }
+      .contact-form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+      .contact-form-actions .add-btn { margin-top: 0; }
+      .contact-map {
+        grid-column: 1 / -1;
+        overflow: hidden;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+      }
+      .contact-map iframe { display:block; width:100%; height:390px; border:0; }
+      .detail-row {
+        display: flex;
+        gap: 16px;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+      .detail-row .lbl {
+        font-size: 12.5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--ink-soft);
+        font-weight: 600;
+        min-width: 110px;
+      }
+      .detail-row .val {
+        font-size: 14.5px;
+        color: var(--ink);
+      }
+      footer {
+        background: var(--ink);
+        color: rgba(255, 255, 255, 0.7);
+        padding: 40px 0;
+        text-align: center;
+        font-size: 13.5px;
+      }
+      footer .brand {
+        color: var(--white);
+      }
+      footer .brand span {
+        color: var(--gold-soft);
+      }
+      @media (max-width: 820px) {
+        #epikoinonia { padding-top: 28px; }
+        .hero {
+          padding: 78px 20px 68px;
+          background-position: 58% center;
+        }
+        .desktop-phone-text { display: none !important; }
+        .mobile-phone-link { display: inline-flex !important; }
+        nav.links {
+          display: none;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .about-grid {
+          grid-template-columns: 1fr;
+          gap: 36px;
+        }
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+      } /* ================= ADMIN SYSTEM ================= */
+      @media (max-width: 1180px) {
+        header.top {
+          padding-right: 0;
+        }
+        .mode-switch {
+          top: auto;
+          bottom: 16px;
+        }
+      }
+      #admin {
+        display: none;
+      }
+      #login-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+      .login-box {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 40px;
+        width: 100%;
+        max-width: 360px;
+        box-shadow: 0 12px 30px rgba(42, 36, 30, 0.06);
+      }
+      .login-sub {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        margin-bottom: 26px;
+        line-height: 1.5;
+      }
+      #login-error {
+        display: none;
+        color: #b5544a;
+        font-size: 13px;
+        margin-top: 12px;
+      }
+      #login-error.show {
+        display: block;
+      }
+      .admin-shell {
+        display: flex;
+        min-height: 100vh;
+      }
+      .admin-nav {
+        width: 220px;
+        background: var(--white);
+        border-right: 1px solid var(--line);
+        padding: 90px 0 20px;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+      }
+      .admin-nav .brand-mini {
+        padding: 0 22px 24px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: 600;
+        font-size: 16px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 14px;
+      }
+      .admin-nav .brand-mini span {
+        color: var(--olive);
+      }
+      .admin-tab {
+        display: block;
+        padding: 12px 22px;
+        font-size: 14.5px;
+        font-weight: 500;
+        color: var(--ink-soft);
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        transition: all 0.15s;
+      }
+      .admin-tab:hover {
+        background: var(--ivory-2);
+      }
+      .admin-tab.active {
+        color: var(--olive-dark);
+        border-left-color: var(--olive);
+        background: var(--ivory-2);
+        font-weight: 600;
+      }
+      .admin-main {
+        margin-left: 220px;
+        padding: 90px 40px 60px;
+        flex: 1;
+        max-width: 920px;
+      }
+      .admin-panel {
+        display: none;
+      }
+      .admin-panel.active {
+        display: block;
+      }
+      .admin-panel h2 {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+      .admin-panel .sub {
+        color: var(--ink-soft);
+        font-size: 14px;
+        margin-bottom: 28px;
+      }
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 36px;
+      }
+      .stat {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 22px;
+      }
+      .stat .n {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 30px;
+        color: var(--olive-dark);
+        font-weight: 600;
+      }
+      .stat .l {
+        font-size: 13px;
+        color: var(--ink-soft);
+        margin-top: 4px;
+      }
+      .panel-box {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 26px;
+        margin-bottom: 24px;
+      }
+      .panel-box h3 {
+        font-size: 15.5px;
+        font-weight: 600;
+        margin-bottom: 16px;
+      }
+      .overview-compact-list {
+        overflow-x: auto;
+      }
+      .overview-compact-row {
+        min-width: max-content;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 13.5px;
+        line-height: 1.4;
+        white-space: nowrap;
+      }
+      .overview-compact-row:last-child {
+        border-bottom: none;
+      }
+      .editable-row {
+        cursor: pointer;
+      }
+      .editable-row:hover {
+        background: var(--ivory-2);
+      }
+      .overview-compact-row strong {
+        color: var(--ink);
+      }
+      .overview-separator {
+        color: var(--olive);
+        padding: 0 7px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .form-row.full {
+        grid-template-columns: 1fr;
+      }
+      label {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        display: block;
+        margin-bottom: 5px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        background: var(--ivory);
+        color: var(--ink);
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: 2px solid var(--olive);
+        outline-offset: 1px;
+        border-color: var(--olive);
+      }
+      .add-btn {
+        margin-top: 6px;
+        background: var(--olive);
+        color: var(--white);
+        border: none;
+        padding: 11px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .add-btn:hover {
+        background: var(--olive-dark);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      th {
+        text-align: left;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--ink-soft);
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      td {
+        padding: 12px 8px;
+        border-bottom: 1px solid var(--line);
+        color: var(--ink);
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .del-btn {
+        background: none;
+        border: none;
+        color: #b5544a;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .empty-note {
+        color: var(--ink-soft);
+        font-size: 13.5px;
+        padding: 18px 0;
+        text-align: center;
+      }
+      .badge {
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+      .badge.pending {
+        background: #f1e4c8;
+        color: #8a6a1f;
+      }
+      .badge.done {
+        background: #dee7d6;
+        color: var(--olive-dark);
+      } /* Family cards with nested τελετές */
+      .family-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 20px 22px;
+        margin-bottom: 16px;
+        background: var(--ivory);
+      }
+      .family-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .family-name {
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: 600;
+        font-size: 16.5px;
+        margin-bottom: 10px;
+      }
+      .family-detail-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 4px;
+      }
+      .family-detail-table tr {
+        border-bottom: 1px solid var(--line);
+      }
+      .family-detail-table tr:last-child {
+        border-bottom: none;
+      }
+      .family-detail-table th {
+        text-align: left;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        padding: 7px 14px 7px 0;
+        width: 170px;
+        vertical-align: top;
+        white-space: nowrap;
+      }
+      .family-detail-table td {
+        text-align: left;
+        font-size: 13.5px;
+        color: var(--ink);
+        padding: 7px 0;
+        vertical-align: top;
+      }
+      .family-actions {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        white-space: nowrap;
+      }
+      .family-services {
+        border-top: 1px solid var(--line);
+        margin-top: 16px;
+        padding-top: 14px;
+      }
+      .family-services-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--olive-dark);
+      }
+      .family-services-head .toggle-icon {
+        font-size: 11px;
+        color: var(--ink-soft);
+      }
+      .family-services-body {
+        margin-top: 12px;
+      }
+      .family-services-body table {
+        margin-bottom: 10px;
+      }
+      .mini-add-btn {
+        background: transparent;
+        border: 1.5px dashed var(--line);
+        color: var(--olive-dark);
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .mini-add-btn:hover {
+        border-color: var(--olive);
+      }
+      .client-view-btn.active {
+        background: var(--olive);
+        border-color: var(--olive);
+        color: var(--white);
+      }
+      @media (max-width: 760px) {
+        .admin-nav {
+          position: relative;
+          width: 100%;
+          padding: 16px 0;
+          height: auto;
+        }
+        .admin-shell {
+          flex-direction: column;
+        }
+        .admin-main {
+          margin-left: 0;
+          padding: 20px;
+        }
+        .stat-row {
+          grid-template-columns: 1fr;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+      .client-success {
+        display: none;
+        margin: 12px 0;
+        padding: 12px 14px;
+        border: 1px solid #9eb28b;
+        border-radius: 10px;
+        background: #f1f6ed;
+        font-weight: 700;
+        color: #405437;
+      }
+      .clients-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .clients-table {
+        width: max-content;
+        min-width: 100%;
+        border-collapse: collapse;
+      }
+      .clients-table th,
+      .clients-table td {
+        white-space: nowrap;
+        padding: 10px 12px;
+        vertical-align: middle;
+      }
+      .clients-table td.notes-cell {
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mode-switch">
+      <button id="btn-site" class="active" onclick="setMode('site')" style="display: none">
+        Ιστοσελίδα
+      </button>
+      <button id="btn-admin" onclick="setMode('admin')">Διαχείριση</button>
+    </div>
+    <!-- ================= PUBLIC SITE ================= -->
+    <div id="site">
+      <header class="top">
+        <div class="nav-inner">
+          <div class="brand" style="cursor:pointer;" onclick="location.hash='home';showPublicPage('home')">Βάχλας <span>Κωνσταντίνος</span></div>
+          <nav class="links">
+            <a href="#ypiresies" onclick="showPublicPage('home')">Υπηρεσίες</a>
+            <a href="#diadikasia" onclick="showPublicPage('home')">Διαδικασία</a> <a href="#sxetika" onclick="showPublicPage('home')">Σχετικά</a>
+            <a href="#epikoinonia" onclick="showPublicPage('contact')">Επικοινωνία</a>
+          </nav>
+          <span class="phone-pill desktop-phone-text">☎ 210 991 2599</span>
+          <a href="tel:2109912599" class="phone-pill mobile-phone-link" aria-label="Καλέστε στο 210 991 2599">☎ 210 991 2599</a>
+        </div>
+      </header>
+      <section class="hero">
+        <div class="glow"></div>
+        <div class="hero-inner">
+          <span class="eyebrow">Γραφείο Τελετών · Οικογενειακή παράδοση</span>
+          <h1>
+            Δίπλα σας σε κάθε βήμα, με <em>σεβασμό</em> και ήσυχη φροντίδα
+          </h1>
+          <p>
+            Αναλαμβάνουμε την οργάνωση της τελετής με διακριτικότητα, ώστε εσείς
+            να έχετε τον χρόνο να είστε κοντά στους δικούς σας ανθρώπους.
+          </p>
+          <div class="hero-actions">
+            <span class="btn btn-primary desktop-phone-text">24ωρη εξυπηρέτηση · Καλέστε μας · 210 991 2599</span>
+            <a href="tel:2109912599" class="btn btn-primary mobile-phone-link">24ωρη εξυπηρέτηση · Καλέστε μας · 210 991 2599</a>
+          </div>
+        </div>
+        <svg
+          class="branch"
+          viewBox="0 0 240 60"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M5 30 C60 10, 180 10, 235 30"
+            stroke="#C79A4B"
+            stroke-width="1.4"
+          />
+          <ellipse
+            cx="40"
+            cy="22"
+            rx="9"
+            ry="4.5"
+            fill="#C79A4B"
+            transform="rotate(-20 40 22)"
+          />
+          <ellipse
+            cx="70"
+            cy="14"
+            rx="9"
+            ry="4.5"
+            fill="#C79A4B"
+            transform="rotate(-15 70 14)"
+          />
+          <ellipse
+            cx="105"
+            cy="10"
+            rx="9"
+            ry="4.5"
+            fill="#C79A4B"
+            transform="rotate(-5 105 10)"
+          />
+          <ellipse
+            cx="140"
+            cy="10"
+            rx="9"
+            ry="4.5"
+            fill="#C79A4B"
+            transform="rotate(5 140 10)"
+          />
+          <ellipse
+            cx="172"
+            cy="14"
+            rx="9"
+            ry="4.5"
+            fill="#C79A4B"
+            transform="rotate(15 172 14)"
+          />
+          <ellipse
+            cx="200"
+            cy="22"
+            rx="9"
+            ry="4.5"
+            fill="#C79A4B"
+            transform="rotate(20 200 22)"
+          />
+        </svg>
+      </section>
+      <section class="services" id="ypiresies">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Υπηρεσίες</span>
+            <h2>Ό,τι χρειάζεται, το αναλαμβάνουμε εμείς</h2>
+            <p>
+              Κάθε λεπτομέρεια, από την πρώτη κλήση έως το μνημόσυνο, με προσοχή
+              και φροντίδα.
+            </p>
+          </div>
+          <div class="grid">
+            <div class="card">
+              <div class="icon">✦</div>
+              <h3>Οργάνωση κηδείας</h3>
+              <p>
+                Πλήρης οργάνωση της τελετής, σε εκκλησία ή κοιμητήριο της
+                επιλογής σας, σύμφωνα με τις παραδόσεις της οικογένειας.
+              </p>
+            </div>
+            <div class="card">
+              <div class="icon">✦</div>
+              <h3>Μνημόσυνα</h3>
+              <p>
+                Προετοιμασία και οργάνωση μνημοσύνων, με μέριμνα για κόλλυβα,
+                στολισμό και κάθε λεπτομέρεια.
+              </p>
+            </div>
+            <div class="card">
+              <div class="icon">✦</div>
+              <h3>Στολισμός & άνθη</h3>
+              <p>
+                Στεφάνια, ανθοσυνθέσεις και στολισμός χώρου, προσαρμοσμένα στις
+                επιθυμίες σας.
+              </p>
+            </div>
+            <div class="card">
+              <div class="icon">✦</div>
+              <h3>Μεταφορές</h3>
+              <p>
+                Μεταφορές εντός και εκτός Αττικής, καθώς και επαναπατρισμοί, με
+                τη δέουσα φροντίδα.
+              </p>
+            </div>
+            <div class="card">
+              <div class="icon">✦</div>
+              <h3>Γραφειοκρατικές διαδικασίες</h3>
+              <p>
+                Αναλαμβάνουμε τα απαραίτητα έγγραφα και τις διατυπώσεις, ώστε να
+                μην επιβαρύνεστε εσείς.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="diadikasia">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Διαδικασία</span>
+            <h2>Πώς προχωράμε μαζί</h2>
+            <p>Τέσσερα βήματα, χωρίς περιττή επιβάρυνση για την οικογένεια.</p>
+          </div>
+          <div class="process-list">
+            <div class="step">
+              <div class="num">1</div>
+              <div>
+                <h3>Πρώτη επικοινωνία</h3>
+                <p>
+                  Μας καλείτε, οποιαδήποτε ώρα, και ακούμε τις ανάγκες σας με
+                  ηρεμία.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="num">2</div>
+              <div>
+                <h3>Ραντεβού & σχεδιασμός</h3>
+                <p>
+                  Συναντιόμαστε για να αποφασίσουμε μαζί κάθε λεπτομέρεια της
+                  τελετής.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="num">3</div>
+              <div>
+                <h3>Προετοιμασία</h3>
+                <p>
+                  Αναλαμβάνουμε τη διοργάνωση, τα έγγραφα και τον στολισμό,
+                  χωρίς να χρειαστεί να ανησυχείτε.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="num">4</div>
+              <div>
+                <h3>Η τελετή</h3>
+                <p>
+                  Είμαστε παρόντες σε κάθε στιγμή, φροντίζοντας ώστε όλα να
+                  κυλήσουν με αξιοπρέπεια.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="about" id="sxetika">
+        <div class="container about-grid">
+          <div class="about-text">
+            <span class="eyebrow">Σχετικά με εμάς</span>
+            <h2>Μια οικογενειακή παρουσία, εδώ και χρόνια</h2>
+            <p>
+              Το γραφείο τελετών Βάχλας Κωνσταντίνος στηρίζει οικογένειες της
+              περιοχής σε δύσκολες στιγμές, με διακριτικότητα και προσωπική
+              φροντίδα σε κάθε βήμα.
+            </p>
+            <p>
+              Πιστεύουμε πως κάθε αποχαιρετισμός είναι μοναδικός, και τον
+              οργανώνουμε με σεβασμό στις επιθυμίες και τις παραδόσεις της κάθε
+              οικογένειας.
+            </p>
+            <div class="values">
+              <div class="value">
+                <b>Σεβασμός</b><span>Σε κάθε επιθυμία της οικογένειας</span>
+              </div>
+              <div class="value">
+                <b>Διακριτικότητα</b><span>Ήσυχη, προσεκτική παρουσία</span>
+              </div>
+              <div class="value">
+                <b>Διαθεσιμότητα</b><span>24 ώρες το 24ωρο, όλο τον χρόνο</span>
+              </div>
+            </div>
+          </div>
+          <div class="about-panel">
+            <p class="quote">
+              «Σε μια στιγμή που όλα φαίνονται βαριά, εμείς αναλαμβάνουμε το
+              βάρος της οργάνωσης — για να μείνει σε εσάς μόνο ο χρόνος να
+              θυμηθείτε.»
+            </p>
+            <p class="who">— Οικογένεια Βάχλα</p>
+          </div>
+        </div>
+      </section>
+      <section id="epikoinonia" style="display:none;">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Επικοινωνία</span>
+            <h2>Είμαστε δίπλα σας, όποια ώρα κι αν χρειαστεί</h2>
+            <p>Επικοινωνήστε μαζί μας τηλεφωνικά, με email ή μέσω της παρακάτω φόρμας.</p>
+          </div>
+          <div class="contact-grid">
+          <div class="contact-card">
+            <span class="eyebrow">Επικοινωνία</span>
+            <h2>Είμαστε δίπλα σας, όποια ώρα κι αν χρειαστεί</h2>
+            <p>
+              Καλέστε μας οποιαδήποτε στιγμή — η γραμμή μας είναι ανοιχτή όλο το
+              24ωρο, κάθε μέρα.
+            </p>
+            <div class="big-phone desktop-phone-text">210 991 2599</div>
+            <a href="tel:2109912599" class="big-phone mobile-phone-link" aria-label="Καλέστε στο 210 991 2599">210 991 2599</a>
+            <p class="desktop-phone-text" style="margin-bottom:0;">Κινητό 24ώρου: <strong style="margin-left:5px;">698 042 1222</strong></p>
+            <p class="mobile-phone-link" style="margin-bottom:0;">Κινητό 24ώρου: <a href="tel:6980421222" style="color:inherit;font-weight:700;margin-left:5px;">698 042 1222</a></p>
+          </div>
+          <div class="contact-details">
+            <div class="detail-row">
+              <div class="lbl">Διεύθυνση</div>
+              <div class="val"><a href="https://www.google.com/maps/search/?api=1&query=Αρχιμήδους+47,+16343+Ηλιούπολη" target="_blank" rel="noopener">Αρχιμήδους 47, 163 43 Ηλιούπολη, Αθήνα</a></div>
+            </div>
+            <div class="detail-row">
+              <div class="lbl">Ωράριο γραφείου</div>
+              <div class="val">Δευτέρα–Σάββατο, 09:00–20:00</div>
+            </div>
+            <div class="detail-row">
+              <div class="lbl">Επείγοντα</div>
+              <div class="val">24 ώρες / 7 ημέρες</div>
+            </div>
+            <div class="detail-row">
+              <div class="lbl">Email</div>
+              <div class="val"><a href="mailto:kvaxlas@yahoo.gr">kvaxlas@yahoo.gr</a></div>
+            </div>
+          </div>
+          <div class="contact-map">
+            <iframe title="Χάρτης Γραφείου Τελετών Βάχλας" lang="el" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Αρχιμήδους+47,+16343+Ηλιούπολη,+Αθήνα&hl=el&output=embed"></iframe>
+          </div>
+          <div class="contact-form">
+            <h3>Στείλτε μας μήνυμα</h3>
+            <p>Συμπληρώστε τα στοιχεία σας και θα επικοινωνήσουμε μαζί σας το συντομότερο δυνατό.</p>
+            <div class="form-row">
+              <div><label>Ονοματεπώνυμο *</label><input id="contact-name" autocomplete="name" /></div>
+              <div><label>Τηλέφωνο *</label><input id="contact-phone" type="tel" autocomplete="tel" /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Email</label><input id="contact-email" type="email" autocomplete="email" /></div>
+              <div><label>Θέμα</label><input id="contact-subject" placeholder="π.χ. Πληροφορίες για τελετή" /></div>
+            </div>
+            <label>Μήνυμα *</label>
+            <textarea id="contact-message" placeholder="Γράψτε το μήνυμά σας..."></textarea>
+            <input id="contact-website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;" />
+            <div class="contact-form-actions">
+              <button class="add-btn" id="contact-submit-btn" onclick="submitContactForm()">Αποστολή μηνύματος</button>
+              <button type="button" class="btn btn-primary" onclick="returnToHome()">← Επιστροφή στην αρχική σελίδα</button>
+            </div>
+            <div id="contact-form-message" class="contact-form-message"></div>
+          </div>
+          </div>
+        </div>
+      </section>
+      <footer>
+        <div class="container">
+          <div class="brand" style="margin-bottom: 8px">
+            Βάχλας <span>Κωνσταντίνος</span>
+          </div>
+          <div>
+            © 2026 Γραφείο Τελετών Βάχλας Κωνσταντίνος. Με σεβασμό, δίπλα σας.
+          </div>
+        </div>
+      </footer>
+    </div>
+    <!-- ================= ADMIN SYSTEM ================= -->
+    <div id="admin">
+      <div id="login-screen">
+        <div class="login-box">
+          <div
+            class="brand-mini"
+            style="border: none; padding: 0 0 22px; margin-bottom: 22px"
+          >
+            Βάχλας <span>Διαχείριση</span>
+          </div>
+          <p class="login-sub">
+            Η πρόσβαση σε αυτή την ενότητα επιτρέπεται μόνο σε εξουσιοδοτημένο
+            προσωπικό.
+          </p>
+          <label>Email διαχειριστή</label>
+          <input
+            id="login-user"
+            type="email"
+            autocomplete="username"
+            placeholder="email@example.com"
+          />
+          <label style="margin-top: 12px">Κωδικός πρόσβασης</label>
+          <input
+            id="login-pass"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Κωδικός πρόσβασης"
+            onkeydown="if(event.key==='Enter') attemptLogin()"
+          />
+          <div id="login-error">
+            Δεν ήταν δυνατή η σύνδεση. Ελέγξτε email και κωδικό.
+          </div>
+          <button
+            id="login-button"
+            class="add-btn"
+            style="width: 100%; margin-top: 16px"
+            onclick="attemptLogin()"
+          >
+            Σύνδεση
+          </button>
+        </div>
+      </div>
+      <div class="admin-shell" id="admin-shell" style="display: none">
+        <div class="admin-nav">
+          <div class="brand-mini">Βάχλας <span>Διαχείριση</span></div>
+          <div
+            class="admin-tab active"
+            data-panel="overview"
+            onclick="setAdminTab('overview')"
+          >
+            Επισκόπηση
+          </div>
+          <div
+            class="admin-tab"
+            data-panel="clients"
+            onclick="setAdminTab('clients')"
+          >
+            Οικογένειες / Τελετές
+          </div>
+          <div
+            class="admin-tab"
+            data-panel="appointments"
+            onclick="setAdminTab('appointments')"
+          >
+            Ραντεβού
+          </div>
+          <div class="admin-tab" data-panel="messages" onclick="setAdminTab('messages')">
+            Μηνύματα <span id="messages-count" style="display:none;margin-left:5px;background:#b5544a;color:white;border-radius:10px;padding:1px 6px;font-size:11px;"></span>
+          </div>
+          <div
+            class="admin-tab"
+            id="users-admin-tab"
+            data-panel="users"
+            onclick="setAdminTab('users')"
+            style="display: none"
+          >
+            Χρήστες
+          </div>
+          <div
+            class="admin-tab"
+            id="safety-admin-tab"
+            data-panel="safety"
+            onclick="setAdminTab('safety')"
+            style="display: none"
+          >
+            Ρυθμίσεις / Backup
+          </div>
+          <div
+            class="admin-tab"
+            onclick="logoutAdmin()"
+            style="margin-top: auto"
+          >
+            Αποσύνδεση
+          </div>
+        </div>
+        <div class="admin-main">
+          <!-- Overview -->
+          <div class="admin-panel active" id="panel-overview">
+            <h2>Επισκόπηση</h2>
+            <p class="sub">Γρήγορη εικόνα της τρέχουσας δραστηριότητας.</p>
+            <div class="stat-row">
+              <div class="stat">
+                <div class="n" id="stat-clients">0</div>
+                <div class="l">Οικογένειες</div>
+              </div>
+              <div class="stat">
+                <div class="n" id="stat-appointments">0</div>
+                <div class="l">Επερχόμενα ραντεβού</div>
+              </div>
+              <div class="stat">
+                <div class="n" id="stat-services">0</div>
+                <div class="l">Τελετές σε εξέλιξη</div>
+              </div>
+            </div>
+            <div class="panel-box">
+              <h3>Επόμενα ραντεβού</h3>
+              <div id="overview-appointments" class="overview-compact-list"></div>
+            </div>
+            <div class="panel-box">
+              <h3>Επερχόμενες τελετές</h3>
+              <div id="overview-services" class="overview-compact-list"></div>
+            </div>
+          </div>
+          <!-- Clients -->
+          <div class="admin-panel" id="panel-clients">
+            <h2>Οικογένειες / Τελετές</h2>
+            <p class="sub">
+              Στοιχεία επικοινωνίας, προκαταβολές και οι τελετές κάθε
+              οικογένειας — μία οικογένεια μπορεί να έχει περισσότερες από μία
+              τελετές (π.χ. κηδεία, 40ήμερο, ετήσιο).
+            </p>
+            <div class="panel-box">
+              <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
+                <div id="client-form-collapsed" style="min-width:160px;">
+                  <button class="add-btn" onclick="openAddClientForm()">
+                    + Νέα οικογένεια
+                  </button>
+                </div>
+                <div style="flex:1;min-width:260px;">
+                  <label>Αναζήτηση οικογένειας</label>
+                  <input
+                    id="client-search"
+                    placeholder="Πληκτρολογήστε όνομα οικογένειας ή θανόντος..."
+                    oninput="clientPage=1;renderClients()"
+                  />
+                </div>
+              </div>
+              <div id="client-form-fields" style="display: none">
+                <h3 id="client-form-title">Νέα καταχώρηση</h3>
+                <div class="form-row">
+                  <div>
+                    <label>Ονοματεπώνυμο επικοινωνίας</label
+                    ><input id="c-name" placeholder="π.χ. Μαρία Παπαδοπούλου" />
+                  </div>
+                  <div>
+                    <label>Τηλέφωνο</label
+                    ><input id="c-phone" placeholder="69X XXX XXXX" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div>
+                    <label>Ονοματεπώνυμο θανόντος/θανούσης</label
+                    ><input
+                      id="c-deceased"
+                      placeholder="π.χ. Γεώργιος Παπαδόπουλος"
+                    />
+                  </div>
+                  <div>
+                    <label>Ημερομηνία επικοινωνίας</label
+                    ><input type="date" id="c-date" />
+                  </div>
+                </div>
+                <div class="form-row full">
+                  <div>
+                    <label>Σημειώσεις</label
+                    ><textarea
+                      id="c-notes"
+                      rows="2"
+                      placeholder="Επιθυμίες οικογένειας, ιδιαιτερότητες..."
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="form-row full">
+                  <div>
+                    <label>Προκαταβολές (€)</label
+                    ><input
+                      type="number"
+                      step="0.01"
+                      id="c-deposit"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                <div
+                  style="
+                    border-top: 1px solid var(--line);
+                    margin-top: 20px;
+                    padding-top: 18px;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      gap: 12px;
+                      flex-wrap: wrap;
+                      margin-bottom: 12px;
+                    "
+                  >
+                    <div>
+                      <h3 style="margin-bottom: 3px">
+                        Τελετές
+                        <span style="font-weight: 400; color: var(--ink-soft)"
+                          >(προαιρετικά)</span
+                        >
+                      </h3>
+                      <div style="font-size: 13px; color: var(--ink-soft)">
+                        Μπορείτε να προσθέσετε καμία, μία ή περισσότερες τελετές
+                        τώρα και επιπλέον τελετές οποιαδήποτε στιγμή αργότερα.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      class="mini-add-btn"
+                      onclick="addDraftService()"
+                    >
+                      + Προσθήκη τελετής
+                    </button>
+                  </div>
+                  <div id="draft-services-list"></div>
+                  <div id="draft-service-form"></div>
+                </div>
+                <button
+                  class="add-btn"
+                  id="client-submit-btn"
+                  onclick="addClient()"
+                >
+                  Αποθήκευση
+                </button>
+                <button
+                  class="add-btn"
+                  id="client-cancel-btn"
+                  style="
+                    background: transparent;
+                    color: var(--ink-soft);
+                    border: 1.5px solid var(--line);
+                  "
+                  onclick="cancelClientEdit()"
+                >
+                  Ακύρωση
+                </button>
+                <button
+                  class="add-btn"
+                  id="client-delete-btn"
+                  style="display:none;background:#b5544a;"
+                  onclick="deleteEditingClient()"
+                >
+                  Διαγραφή
+                </button>
+              </div>
+            </div>
+            <div id="client-success" class="client-success"></div>
+            <div class="panel-box">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px;">
+                <h3 style="margin:0;">Οικογένειες</h3>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button class="mini-add-btn client-view-btn" id="client-view-active" onclick="setClientView('active')">Ενεργές</button>
+                  <button class="mini-add-btn client-view-btn" id="client-view-all" onclick="setClientView('all')">Όλες</button>
+                  <button class="mini-add-btn client-view-btn" id="client-view-archive" onclick="setClientView('archive')">Ιστορικό</button>
+                </div>
+              </div>
+              <div id="clients-list"></div>
+              <div class="empty-note" id="clients-empty">
+                Δεν υπάρχουν καταχωρημένες οικογένειες.
+              </div>
+              <div id="clients-pagination" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:18px;"></div>
+            </div>
+          </div>
+          <!-- Appointments -->
+          <div class="admin-panel" id="panel-appointments">
+            <h2>Ραντεβού</h2>
+            <p class="sub">
+              Συναντήσεις με οικογένειες για τον σχεδιασμό της τελετής.
+            </p>
+            <div class="panel-box">
+              <h3 id="appointment-form-title">Νέο ραντεβού</h3>
+              <div class="form-row">
+                <div>
+                  <label>Οικογένεια</label
+                  ><input
+                    id="a-family"
+                    placeholder="π.χ. Οικογένεια Παπαδοπούλου"
+                  />
+                </div>
+                <div>
+                  <label>Ημερομηνία & ώρα</label
+                  ><input type="datetime-local" id="a-datetime" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div>
+                  <label>Σκοπός ραντεβού</label
+                  ><input
+                    id="a-purpose"
+                    placeholder="π.χ. Επιλογή φερέτρου και στολισμού"
+                  />
+                </div>
+                <div>
+                  <label>Τηλέφωνο</label
+                  ><input
+                    id="a-phone"
+                    type="tel"
+                    placeholder="π.χ. 694 123 4567"
+                  />
+                </div>
+              </div>
+              <button
+                class="add-btn"
+                id="appointment-submit-btn"
+                onclick="addAppointment()"
+              >
+                Προσθήκη ραντεβού
+              </button>
+              <button
+                class="add-btn"
+                id="appointment-cancel-btn"
+                style="
+                  display: none;
+                  background: transparent;
+                  color: var(--ink-soft);
+                  border: 1.5px solid var(--line);
+                "
+                onclick="cancelAppointmentEdit()"
+              >
+                Ακύρωση
+              </button>
+              <button
+                class="add-btn"
+                id="appointment-delete-btn"
+                style="display:none;background:#b5544a;"
+                onclick="deleteEditingAppointment()"
+              >
+                Διαγραφή
+              </button>
+            </div>
+            <div id="appointment-success" class="client-success"></div>
+            <div class="panel-box">
+              <h3>Προγραμματισμένα ραντεβού</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Οικογένεια</th>
+                    <th>Ημ/νία & ώρα</th>
+                    <th>Σκοπός</th>
+                    <th>Τηλέφωνο</th>
+                    <th></th>
+                    <th>Χρ.</th>
+                  </tr>
+                </thead>
+                <tbody id="appointments-tbody"></tbody>
+              </table>
+              <div
+                class="empty-note"
+                id="appointments-empty"
+                style="display: none"
+              >
+                Δεν υπάρχουν προγραμματισμένα ραντεβού.
+              </div>
+            </div>
+          </div>
+          <!-- Contact messages -->
+          <div class="admin-panel" id="panel-messages">
+            <h2>Μηνύματα επικοινωνίας</h2>
+            <p class="sub">Μηνύματα που έχουν σταλεί από τη φόρμα της ιστοσελίδας.</p>
+            <div class="panel-box" id="contact-email-settings" style="display:none;">
+              <h3>Email παραλαβής</h3>
+              <div class="form-row" style="align-items:end;">
+                <div><label>Διεύθυνση email</label><input id="contact-recipient-email" type="email" value="kvaxlas@yahoo.gr" /></div>
+                <div><button class="add-btn" onclick="saveContactRecipient()">Αποθήκευση email</button></div>
+              </div>
+              <div id="contact-setting-message" style="display:none;margin-top:10px;font-size:13.5px;"></div>
+            </div>
+            <div class="panel-box" id="contact-message-editor" style="display:none;">
+              <h3>Επεξεργασία μηνύματος</h3>
+              <div class="form-row">
+                <div><label>Ονοματεπώνυμο</label><input id="cm-name" /></div>
+                <div><label>Τηλέφωνο</label><input id="cm-phone" /></div>
+              </div>
+              <div class="form-row">
+                <div><label>Email</label><input id="cm-email" type="email" /></div>
+                <div><label>Θέμα</label><input id="cm-subject" /></div>
+              </div>
+              <label>Μήνυμα</label>
+              <textarea id="cm-message" style="min-height:130px;"></textarea>
+              <div style="margin-top:16px;">
+                <button class="add-btn" onclick="saveContactMessageEdit()">Αποθήκευση</button>
+                <button class="add-btn" style="background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);" onclick="cancelContactMessageEdit()">Ακύρωση</button>
+                <button class="add-btn" style="background:#b5544a;" onclick="deleteEditingContactMessage()">Διαγραφή</button>
+              </div>
+              <div id="contact-editor-message" style="display:none;margin-top:10px;font-size:13.5px;"></div>
+            </div>
+            <div class="panel-box">
+              <div id="contact-messages-list"></div>
+              <div class="empty-note" id="contact-messages-empty" style="display:none;">Δεν υπάρχουν μηνύματα.</div>
+            </div>
+          </div>
+          <!-- Users (owner only) -->
+          <div class="admin-panel" id="panel-users">
+            <h2>Χρήστες</h2>
+            <p class="sub">
+              Δημιουργία και διαχείριση των εξουσιοδοτημένων χρηστών της εφαρμογής.
+            </p>
+            <div class="panel-box">
+              <h3 id="user-form-title">Νέος χρήστης</h3>
+              <input id="u-edit-id" type="hidden" />
+              <div class="form-row">
+                <div>
+                  <label>Ονοματεπώνυμο</label>
+                  <input id="u-name" placeholder="π.χ. Μαρία Παπαδοπούλου" />
+                </div>
+                <div>
+                  <label>Email</label>
+                  <input id="u-email" type="email" placeholder="email@example.com" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div>
+                  <label id="u-password-label">Προσωρινός κωδικός</label>
+                  <input id="u-password" type="password" autocomplete="new-password" placeholder="Τουλάχιστον 8 χαρακτήρες" />
+                </div>
+                <div>
+                  <label>Ρόλος</label>
+                  <select id="u-role">
+                    <option value="employee">Υπάλληλος</option>
+                    <option value="owner">Ιδιοκτήτης</option>
+                  </select>
+                </div>
+              </div>
+              <button class="add-btn" id="user-create-btn" onclick="createManagedUser()">
+                Δημιουργία χρήστη
+              </button>
+              <button class="add-btn" id="user-cancel-btn" style="display:none;margin-left:8px;background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);" onclick="cancelManagedUserEdit()">
+                Ακύρωση
+              </button>
+              <button class="add-btn" id="user-delete-btn" style="display:none;margin-left:8px;background:#b5544a;" onclick="deleteManagedUser()">
+                Διαγραφή χρήστη
+              </button>
+              <div id="user-message" style="display:none; margin-top:12px; font-size:13.5px;"></div>
+            </div>
+            <div class="panel-box">
+              <h3>Εξουσιοδοτημένοι χρήστες</h3>
+              <div id="users-list"></div>
+              <div class="empty-note" id="users-empty" style="display:none;">
+                Δεν υπάρχουν καταχωρημένοι χρήστες.
+              </div>
+            </div>
+          </div>
+          <!-- Settings and backup (owner only) -->
+          <div class="admin-panel" id="panel-safety">
+            <h2>Ρυθμίσεις και αντίγραφα ασφαλείας</h2>
+            <p class="sub">Διαχείριση τύπων τελετών και ασφαλής εξαγωγή ή επαναφορά των δεδομένων.</p>
+            <div class="panel-box">
+              <h3>Τύποι τελετών</h3>
+              <p class="sub" style="margin-bottom:18px;">Οι ανενεργοί τύποι παραμένουν στις παλιές τελετές, αλλά δεν εμφανίζονται στις νέες καταχωρήσεις.</p>
+              <div class="form-row" style="align-items:end;">
+                <div>
+                  <label>Νέος τύπος τελετής</label>
+                  <input id="new-service-type" maxlength="80" placeholder="π.χ. Τρισάγιο" />
+                </div>
+                <div><button class="add-btn" onclick="addServiceType()">Προσθήκη τύπου</button></div>
+              </div>
+              <div id="service-type-message" style="display:none;margin:10px 0;font-size:13.5px;"></div>
+              <div id="service-types-list"></div>
+            </div>
+            <div class="panel-box">
+              <h3>Backup</h3>
+              <p class="sub">Κατεβάζει ένα αρχείο JSON με οικογένειες, τελετές, ραντεβού, μηνύματα και ρυθμίσεις. Οι λογαριασμοί σύνδεσης δεν περιλαμβάνονται.</p>
+              <button class="add-btn" id="backup-download-btn" onclick="downloadBackup()">Λήψη νέου backup</button>
+              <div id="backup-message" style="display:none;margin-top:12px;font-size:13.5px;"></div>
+            </div>
+            <div class="panel-box">
+              <h3>Restore</h3>
+              <p class="sub">Η επαναφορά ενημερώνει ή επαναφέρει τις εγγραφές του αρχείου χωρίς να διαγράφει νεότερες εγγραφές που δεν υπάρχουν στο backup.</p>
+              <input id="backup-file-input" type="file" accept="application/json,.json" style="display:none;" onchange="prepareRestore(event)" />
+              <button class="add-btn" onclick="document.getElementById('backup-file-input').click()">Επιλογή αρχείου backup</button>
+              <div id="restore-preview" style="display:none;margin-top:16px;"></div>
+              <button class="add-btn" id="restore-run-btn" style="display:none;margin-top:14px;background:#b5544a;" onclick="restoreSelectedBackup()">Εκτέλεση επαναφοράς</button>
+              <div id="restore-message" style="display:none;margin-top:12px;font-size:13.5px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      /* ---------- Mode switching ---------- */ const SUPABASE_URL =
+        "https://bpisvzrxxywhmaqksqzr.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_0aYH0g9GYs6TsLSe0ha0hw_AOP_rOy5";
+      const sb = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: false,
+          },
+        },
+      );
+      let isAuthenticated = false;
+      let currentUserProfile = null;
+      let managedUsers = [];
+      let managedContactMessages = [];
+      let editingContactMessageId = null;
+      let selectedBackup = null;
+
+      const PUBLIC_HOME_SECTIONS = [
+        ".hero",
+        "#ypiresies",
+        "#diadikasia",
+        "#sxetika",
+      ];
+
+      function showPublicPage(page) {
+        const showContact = page === "contact";
+        PUBLIC_HOME_SECTIONS.forEach((selector) => {
+          const section = document.querySelector(selector);
+          if (section) section.style.display = showContact ? "none" : "";
+        });
+        const contact = document.getElementById("epikoinonia");
+        if (contact) contact.style.display = showContact ? "block" : "none";
+        document.title = showContact
+          ? "Επικοινωνία | Βάχλας Κωνσταντίνος"
+          : "Γραφείο Τελετών Βάχλας Κωνσταντίνος";
+        if (showContact) window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function returnToHome() {
+        location.hash = "home";
+        showPublicPage("home");
+        window.scrollTo({ top: 0, behavior: "auto" });
+        requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+      }
+
+      function syncPublicRoute() {
+        const isContact = location.hash === "#epikoinonia";
+        showPublicPage(isContact ? "contact" : "home");
+        if (location.hash === "#home") {
+          requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
+        }
+      }
+
+      window.addEventListener("hashchange", syncPublicRoute);
+
+      function setMode(mode) {
+        localStorage.setItem("vachlas_mode", mode);
+        document.getElementById("btn-site").style.display =
+          mode === "admin" ? "block" : "none";
+        document.getElementById("site").style.display =
+          mode === "site" ? "block" : "none";
+        document.getElementById("admin").style.display =
+          mode === "admin" ? "block" : "none";
+        document
+          .getElementById("btn-site")
+          .classList.toggle("active", mode === "site");
+        document
+          .getElementById("btn-admin")
+          .classList.toggle("active", mode === "admin");
+        if (mode === "admin") showAdminGate();
+        else syncPublicRoute();
+      }
+      async function showAdminGate() {
+        const { data } = await sb.auth.getSession();
+        isAuthenticated = !!data.session;
+        document.getElementById("login-screen").style.display = isAuthenticated
+          ? "none"
+          : "flex";
+        document.getElementById("admin-shell").style.display = isAuthenticated
+          ? "flex"
+          : "none";
+        if (isAuthenticated) {
+          const profileReady = await loadCurrentUserProfile();
+          if (!profileReady) return;
+          await migrateLocalAppointmentsOnce();
+          await refreshAll();
+          setAdminTab(localStorage.getItem("vachlas_admin_tab") || "overview");
+        }
+      }
+      async function attemptLogin() {
+        const email = document.getElementById("login-user").value.trim();
+        const pass = document.getElementById("login-pass").value;
+        const err = document.getElementById("login-error");
+        const button = document.getElementById("login-button");
+        err.classList.remove("show");
+        if (!email || !pass) {
+          err.textContent = "Συμπληρώστε το email και τον κωδικό πρόσβασης.";
+          err.classList.add("show");
+          return;
+        }
+        button.disabled = true;
+        button.textContent = "Γίνεται σύνδεση…";
+        try {
+          const { error } = await sb.auth.signInWithPassword({
+            email,
+            password: pass,
+          });
+          if (error) throw error;
+          isAuthenticated = true;
+          document.getElementById("login-user").value = "";
+          document.getElementById("login-pass").value = "";
+          await showAdminGate();
+        } catch (error) {
+          console.error("Supabase login error:", error);
+          err.textContent =
+            error && error.message === "Failed to fetch"
+              ? "Δεν υπάρχει σύνδεση με τη βάση δεδομένων. Ελέγξτε τη σύνδεση στο Internet και δοκιμάστε ξανά."
+              : "Δεν ήταν δυνατή η σύνδεση. Ελέγξτε email και κωδικό.";
+          err.classList.add("show");
+        } finally {
+          button.disabled = false;
+          button.textContent = "Σύνδεση";
+        }
+      }
+      async function logoutAdmin() {
+        await sb.auth.signOut();
+        isAuthenticated = false;
+        currentUserProfile = null;
+        showAdminGate();
+      }
+      function setAdminTab(name) {
+        if (
+          (name === "users" || name === "safety") &&
+          (!currentUserProfile || currentUserProfile.role !== "owner")
+        ) {
+          name = "overview";
+        }
+        localStorage.setItem("vachlas_admin_tab", name);
+        document
+          .querySelectorAll(".admin-tab")
+          .forEach((t) =>
+            t.classList.toggle("active", t.dataset.panel === name),
+          );
+        document
+          .querySelectorAll(".admin-panel")
+          .forEach((p) =>
+            p.classList.toggle("active", p.id === "panel-" + name),
+          );
+        /* Reset any lingering edit/add-form state so switching tabs never leaves a stale edit view behind */ let needsClientsRerender = false;
+        if (editingClientId !== null) {
+          editingClientId = null;
+          needsClientsRerender = true;
+        }
+        if (serviceFormClientId !== null) {
+          serviceFormClientId = null;
+          serviceFormEditingId = null;
+          needsClientsRerender = true;
+        }
+        if (expandedFamilies.size) {
+          expandedFamilies.clear();
+          needsClientsRerender = true;
+        }
+        draftServices = [];
+        draftServiceEditingIndex = null;
+        CLIENT_FIELD_IDS.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        document.getElementById("client-form-title").textContent =
+          "Νέα καταχώρηση";
+        document.getElementById("client-submit-btn").textContent =
+          "Αποθήκευση";
+        document.getElementById("client-cancel-btn").style.display = "none";
+        document.getElementById("client-delete-btn").style.display = "none";
+        document.getElementById("client-form-fields").style.display = "none";
+        document.getElementById("client-form-collapsed").style.display = "block";
+        document.getElementById("client-form-collapsed").style.visibility =
+          "visible";
+        renderDraftServices();
+        if (needsClientsRerender) renderClients();
+        if (editingAppointmentId !== null) {
+          cancelAppointmentEdit();
+        }
+        if (name !== "users") cancelManagedUserEdit();
+        if (name !== "messages") cancelContactMessageEdit();
+        if (name === "messages") renderContactMessages();
+        if (name === "safety") renderServiceTypes();
+      }
+      function rowRequestsEdit(event) {
+        return !event.target.closest(
+          "button, a, input, select, textarea, label, .badge, [role='button']",
+        );
+      }
+      function editServiceFromOverview(clientId, serviceId) {
+        setAdminTab("clients");
+        expandedFamilies.add(clientId);
+        openServiceForm(clientId, serviceId);
+      }
+      function editAppointmentFromOverview(appointmentId) {
+        setAdminTab("appointments");
+        editAppointment(appointmentId);
+      }
+      /* ---------- Storage helpers ---------- */ async function loadArr(key) {
+        if (key === "appointments") {
+          const { data, error } = await sb
+            .from("appointments")
+            .select("id,family,appointment_datetime,purpose,phone,last_modified_by,last_editor:user_profiles!appointments_last_modified_by_fkey(user_number,full_name)")
+            .order("appointment_datetime", { ascending: true });
+          if (error) {
+            console.error("Supabase appointments load error:", error);
+            throw error;
+          }
+          return (data || []).map((a) => ({
+            id: Number(a.id),
+            family: a.family || "",
+            datetime: a.appointment_datetime
+              ? String(a.appointment_datetime).slice(0, 16)
+              : "",
+            _appointmentDatetime: a.appointment_datetime || null,
+            purpose: a.purpose || "",
+            phone: a.phone || "",
+            lastModifiedById: a.last_modified_by || null,
+            lastHandler: a.last_editor || null,
+          }));
+        }
+
+        const { data, error } = await sb
+          .from("families")
+          .select(
+            "id,created_at,family_name,deceased_name,contact_name,phone,email,address,notes,advance_payment,is_archived,archived_at,last_modified_by,last_editor:user_profiles!families_last_modified_by_fkey(user_number,full_name),services(id,created_at,family_id,service_type,service_datetime,place,price,notes,status,last_modified_by,last_editor:user_profiles!services_last_modified_by_fkey(user_number,full_name))",
+          )
+          .order("family_name", { ascending: true });
+        if (error) {
+          console.error("Supabase load error:", error);
+          throw error;
+        }
+        return (data || []).map((f) => ({
+          id: Number(f.id),
+          name: f.family_name || f.contact_name || "",
+          phone: f.phone || "",
+          deceased: f.deceased_name || "",
+          date: f.created_at ? String(f.created_at).slice(0, 10) : "",
+          _createdAt: f.created_at || null,
+          notes: f.notes || "",
+          deposit: Number(f.advance_payment || 0),
+          _contact_name: f.contact_name || "",
+          _email: f.email || "",
+          _address: f.address || "",
+          isArchived: !!f.is_archived,
+          archivedAt: f.archived_at || null,
+          lastModifiedById: f.last_modified_by || null,
+          lastHandler: f.last_editor || null,
+          services: (f.services || []).map((x) => ({
+            id: Number(x.id),
+            type: x.service_type || "",
+            datetime: x.service_datetime
+              ? String(x.service_datetime).slice(0, 16)
+              : "",
+            _serviceDatetime: x.service_datetime || null,
+            place: x.place || "",
+            price: Number(x.price || 0),
+            notes: x.notes || "",
+            status: x.status || "pending",
+            lastModifiedById: x.last_modified_by || null,
+            lastHandler: x.last_editor || null,
+          })),
+        }));
+      }
+
+      async function saveArr(key, arr) {
+        if (key === "appointments") {
+          const rows = arr.map((a) => ({
+            id: a.id,
+            family: a.family || "",
+            appointment_datetime:
+              a._appointmentDatetime &&
+              String(a._appointmentDatetime).slice(0, 16) === a.datetime
+                ? a._appointmentDatetime
+                : a.datetime || null,
+            purpose: a.purpose || null,
+            phone: a.phone || null,
+          }));
+          if (!rows.length) return;
+          const { error } = await sb
+            .from("appointments")
+            .upsert(rows, { onConflict: "id" });
+          if (error) {
+            console.error("Supabase appointments save error:", error);
+            throw error;
+          }
+          return;
+        }
+
+        const familyRows = arr.map((c) => {
+          const row = {
+            id: c.id,
+            family_name: c.name || "",
+            deceased_name: c.deceased || null,
+            contact_name: c._contact_name || c.name || null,
+            phone: c.phone || null,
+            email: c._email || null,
+            address: c._address || null,
+            notes: c.notes || null,
+            advance_payment: Number(c.deposit || 0),
+            is_archived: !!c.isArchived,
+            archived_at: c.archivedAt || null,
+          };
+          if (c.date) {
+            row.created_at =
+              c._createdAt && String(c._createdAt).slice(0, 10) === c.date
+                ? c._createdAt
+                : new Date(c.date + "T12:00:00").toISOString();
+          }
+          return row;
+        });
+
+        if (familyRows.length) {
+          const { error } = await sb
+            .from("families")
+            .upsert(familyRows, { onConflict: "id" });
+          if (error) {
+            console.error("Supabase families save error:", error);
+            throw error;
+          }
+        }
+
+        for (const c of arr) {
+          const serviceRows = (c.services || []).map((x) => ({
+            id: x.id,
+            family_id: c.id,
+            service_type: x.type || "Κηδεία",
+            service_datetime:
+              x._serviceDatetime &&
+              String(x._serviceDatetime).slice(0, 16) === x.datetime
+                ? x._serviceDatetime
+                : x.datetime || null,
+            place: x.place || null,
+            price: Number(x.price || 0),
+            notes: x.notes || null,
+            status: x.status || "pending",
+          }));
+          if (serviceRows.length) {
+            const { error: serviceError } = await sb
+              .from("services")
+              .upsert(serviceRows, { onConflict: "id" });
+            if (serviceError) throw serviceError;
+          }
+        }
+      }
+      function fmtDateTime(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        return d.toLocaleString("el-GR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+      function formatLastHandler(handler) {
+        if (!handler || !handler.user_number) return "—";
+        return `#${handler.user_number}`;
+      }
+      function fmtDate(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        return d.toLocaleDateString("el-GR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+      }
+      /* ---------- Clients (with nested Τελετές) ---------- */ let editingClientId =
+        null;
+      const CLIENT_FIELD_IDS = [
+        "c-name",
+        "c-phone",
+        "c-deceased",
+        "c-date",
+        "c-notes",
+        "c-deposit",
+      ];
+      let expandedFamilies = new Set();
+      let serviceFormClientId = null;
+      let serviceFormEditingId = null;
+      let draftServices = [];
+      let draftServiceEditingIndex = null;
+      let clientViewMode = "active";
+      let clientPage = 1;
+      const CLIENTS_PER_PAGE = 20;
+      const DEFAULT_SERVICE_TYPES = [
+        "Κηδεία",
+        "Μνημόσυνο 40 ημερών",
+        "Μνημόσυνο ετήσιο",
+        "Καύση",
+      ];
+      let serviceTypes = DEFAULT_SERVICE_TYPES.map((name, index) => ({
+        id: null,
+        name,
+        is_active: true,
+        sort_order: (index + 1) * 10,
+      }));
+      function recalcBalance() {
+        /* Τα οικονομικά προκύπτουν από τις τελετές. */
+      }
+      function openAddClientForm() {
+        editingClientId = null;
+        draftServices = [];
+        draftServiceEditingIndex = null;
+        serviceFormClientId = null;
+        serviceFormEditingId = null;
+        CLIENT_FIELD_IDS.forEach((id) => {
+          const field = document.getElementById(id);
+          if (field) field.value = "";
+        });
+        document.getElementById("client-form-title").textContent =
+          "Νέα καταχώρηση";
+        document.getElementById("client-submit-btn").textContent =
+          "Αποθήκευση";
+        document.getElementById("client-cancel-btn").style.display =
+          "inline-flex";
+        document.getElementById("client-delete-btn").style.display = "none";
+        document.getElementById("client-form-collapsed").style.visibility =
+          "hidden";
+        document.getElementById("client-form-fields").style.display = "block";
+        renderDraftServices();
+        document.getElementById("c-name").focus();
+      }
+      function draftServiceFormHTML(service, index) {
+        const isEdit = index !== null && index !== undefined;
+        return `<div class="panel-box" style="margin-top:12px;background:var(--ivory-2);">
+ <div class="form-row"><div><label>Τύπος</label><select id="ds-type">${serviceTypeOptions(service ? service.type : "Κηδεία")}</select></div>
+ <div><label>Ημερομηνία & ώρα</label><input type="datetime-local" id="ds-datetime" value="${service ? service.datetime || "" : ""}"></div></div>
+ <div class="form-row"><div><label>Τόπος (εκκλησία / κοιμητήριο)</label><input id="ds-place" value="${escapeHtml(service ? service.place || "" : "")}" placeholder="π.χ. Ι.Ν. Αγίου Νικολάου"></div>
+ <div><label>Κατάσταση</label><select id="ds-status"><option value="pending" ${!service || service.status === "pending" ? "selected" : ""}>Σε προετοιμασία</option><option value="done" ${service && service.status === "done" ? "selected" : ""}>Ολοκληρώθηκε</option></select></div></div>
+ <div class="form-row"><div><label>Τιμή τελετής (€)</label><input type="number" step="0.01" id="ds-price" value="${service && service.price ? service.price : ""}" placeholder="0.00"></div><div></div></div>
+ <button type="button" class="add-btn" onclick="saveDraftService()">${isEdit ? "Αποθήκευση αλλαγών" : "Προσθήκη τελετής"}</button>
+ <button type="button" class="add-btn" style="background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);" onclick="cancelDraftServiceForm()">Ακύρωση</button>
+ ${isEdit ? `<button type="button" class="add-btn" style="background:#b5544a;" onclick="deleteDraftService(${index})">Διαγραφή</button>` : ""}</div>`;
+      }
+      function renderDraftServices() {
+        const list = document.getElementById("draft-services-list"),
+          form = document.getElementById("draft-service-form");
+        if (!list || !form) return;
+        list.innerHTML = draftServices.length
+          ? `<table><thead><tr><th>Τύπος</th><th>Ημ/νία & ώρα</th><th>Τόπος</th><th>Τιμή</th><th>Κατάσταση</th><th></th><th>Χρ.</th></tr></thead><tbody>${draftServices.map((x, i) => `<tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editDraftService(${i})"><td>${escapeHtml(x.type)}</td><td>${fmtDateTime(x.datetime)}</td><td>${escapeHtml(x.place || "—")}</td><td>${fmtEuro(x.price)}</td><td><span class="badge ${x.status}">${x.status === "pending" ? "Σε προετοιμασία" : "Ολοκληρώθηκε"}</span></td><td style="white-space:nowrap;"><button type="button" class="del-btn" style="color:var(--olive-dark);margin-right:10px;" onclick="editDraftService(${i})">Επεξεργασία</button></td><td>${formatLastHandler(x.lastHandler)}</td></tr>`).join("")}</tbody></table>`
+          : '<div class="empty-note" style="padding:8px 0 4px;">Δεν έχει προστεθεί τελετή.</div>';
+        form.innerHTML =
+          draftServiceEditingIndex === false
+            ? draftServiceFormHTML(null, null)
+            : draftServiceEditingIndex !== null
+              ? draftServiceFormHTML(
+                  draftServices[draftServiceEditingIndex],
+                  draftServiceEditingIndex,
+                )
+              : "";
+        recalcBalance();
+      }
+      function addDraftService() {
+        draftServiceEditingIndex = false;
+        renderDraftServices();
+      }
+      function editDraftService(i) {
+        draftServiceEditingIndex = i;
+        renderDraftServices();
+      }
+      function cancelDraftServiceForm() {
+        draftServiceEditingIndex = null;
+        renderDraftServices();
+      }
+      function deleteDraftService(i) {
+        if (!confirm("Να διαγραφεί αυτή η τελετή;")) return;
+        draftServices.splice(i, 1);
+        draftServiceEditingIndex = null;
+        renderDraftServices();
+      }
+      function saveDraftService() {
+        const dt = document.getElementById("ds-datetime").value;
+        if (!dt) return;
+        const old =
+          draftServiceEditingIndex !== false &&
+          draftServiceEditingIndex !== null
+            ? draftServices[draftServiceEditingIndex]
+            : null;
+        const x = {
+          ...(old || {}),
+          id: old ? old.id : Date.now(),
+          type: document.getElementById("ds-type").value,
+          datetime: dt,
+          place: document.getElementById("ds-place").value.trim(),
+          status: document.getElementById("ds-status").value,
+          price: parseFloat(document.getElementById("ds-price").value) || 0,
+        };
+        if (old) draftServices[draftServiceEditingIndex] = x;
+        else draftServices.push(x);
+        draftServiceEditingIndex = null;
+        renderDraftServices();
+      }
+      async function addClient() {
+        const name = document.getElementById("c-name").value.trim();
+        if (!name) {
+          return;
+        }
+        const submitButton = document.getElementById("client-submit-btn");
+        submitButton.disabled = true;
+        const originalButtonText = submitButton.textContent;
+        submitButton.textContent = "Αποθήκευση…";
+        let savedClientId = editingClientId;
+        let removedServiceIds = [];
+        try {
+        const deposit =
+          parseFloat(document.getElementById("c-deposit").value) || 0;
+        const list = await loadArr("clients");
+        const wasEditing = editingClientId !== null;
+        if (editingClientId !== null) {
+          const idx = list.findIndex((c) => c.id === editingClientId);
+          if (idx !== -1) {
+            const newServiceIds = new Set(draftServices.map((x) => Number(x.id)));
+            removedServiceIds = (list[idx].services || [])
+              .map((x) => Number(x.id))
+              .filter((id) => !newServiceIds.has(id));
+            list[idx] = {
+              ...list[idx],
+              id: editingClientId,
+              name,
+              phone: document.getElementById("c-phone").value.trim(),
+              deceased: document.getElementById("c-deceased").value.trim(),
+              date: document.getElementById("c-date").value,
+              notes: document.getElementById("c-notes").value.trim(),
+              deposit,
+              services: draftServices.map((x) => ({ ...x })),
+            };
+          }
+        } else {
+          savedClientId = Date.now();
+          list.push({
+            id: savedClientId,
+            name,
+            phone: document.getElementById("c-phone").value.trim(),
+            deceased: document.getElementById("c-deceased").value.trim(),
+            date: document.getElementById("c-date").value,
+            notes: document.getElementById("c-notes").value.trim(),
+            deposit,
+            isArchived: false,
+            archivedAt: null,
+            services: draftServices.map((x) => ({ ...x })),
+          });
+        }
+        await saveArr("clients", list);
+        if (removedServiceIds.length) {
+          const { error: removeError } = await sb
+            .from("services")
+            .delete()
+            .in("id", removedServiceIds);
+          if (removeError) throw removeError;
+        }
+        const { data: confirmed, error: confirmError } = await sb
+          .from("families")
+          .select("id")
+          .eq("id", savedClientId)
+          .single();
+        if (confirmError || !confirmed) {
+          throw confirmError || new Error("Η εγγραφή δεν επιβεβαιώθηκε.");
+        }
+        cancelClientEdit();
+        const searchInput = document.getElementById("client-search");
+        if (searchInput) searchInput.value = "";
+        await renderClients();
+        showClientSuccess(
+          wasEditing
+            ? "Η οικογένεια ενημερώθηκε επιτυχώς."
+            : "Η οικογένεια καταχωρήθηκε επιτυχώς.",
+        );
+        } catch (error) {
+          console.error("Client save error:", error);
+          showClientError("Η αποθήκευση δεν ολοκληρώθηκε. Δεν έγινε καμία επιβεβαιωμένη καταχώρηση στη βάση.");
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = originalButtonText;
+        }
+      }
+      function showClientSuccess(message) {
+        const box = document.getElementById("client-success");
+        if (!box) return;
+        box.textContent = "✓ " + message;
+        box.style.display = "block";
+        box.style.background = "#f1f6ed";
+        box.style.borderColor = "#9eb28b";
+        box.style.color = "#405437";
+        box.scrollIntoView({ behavior: "smooth", block: "center" });
+        clearTimeout(window._clientSuccessTimer);
+        window._clientSuccessTimer = setTimeout(() => {
+          box.style.display = "none";
+        }, 4500);
+      }
+      function showClientError(message) {
+        const box = document.getElementById("client-success");
+        if (!box) return;
+        box.textContent = "✕ " + message;
+        box.style.display = "block";
+        box.style.background = "#fff0ee";
+        box.style.borderColor = "#d8a09a";
+        box.style.color = "#8b332b";
+        box.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      async function deleteClient(id) {
+        if (!confirm("Να διαγραφεί οριστικά αυτή η οικογένεια και όλες οι τελετές της;")) return;
+        const { error } = await sb.from("families").delete().eq("id", id);
+        if (error) {
+          showClientError("Η διαγραφή δεν ολοκληρώθηκε.");
+          return;
+        }
+        if (editingClientId === id) cancelClientEdit();
+        expandedFamilies.delete(id);
+        if (serviceFormClientId === id) closeServiceForm(false);
+        renderClients();
+      }
+      function deleteEditingClient() {
+        if (editingClientId === null) return;
+        deleteClient(editingClientId);
+      }
+      async function editClient(id) {
+        const list = await loadArr("clients");
+        const c = list.find((x) => x.id === id);
+        if (!c) return;
+        editingClientId = id;
+        document.getElementById("c-name").value = c.name || "";
+        document.getElementById("c-phone").value = c.phone || "";
+        document.getElementById("c-deceased").value = c.deceased || "";
+        document.getElementById("c-date").value = c.date || "";
+        document.getElementById("c-notes").value = c.notes || "";
+        document.getElementById("c-deposit").value = c.deposit || "";
+        draftServices = (c.services || []).map((x) => ({ ...x }));
+        draftServiceEditingIndex = null;
+        renderDraftServices();
+        document.getElementById("client-form-title").textContent =
+          "Επεξεργασία οικογένειας";
+        document.getElementById("client-submit-btn").textContent =
+          "Αποθήκευση";
+        document.getElementById("client-cancel-btn").style.display =
+          "inline-flex";
+        document.getElementById("client-delete-btn").style.display =
+          "inline-flex";
+        document.getElementById("client-form-collapsed").style.visibility =
+          "hidden";
+        document.getElementById("client-form-fields").style.display = "block";
+        document
+          .getElementById("panel-clients")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function cancelClientEdit() {
+        editingClientId = null;
+        draftServices = [];
+        draftServiceEditingIndex = null;
+        CLIENT_FIELD_IDS.forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        document.getElementById("client-form-title").textContent =
+          "Νέα καταχώρηση";
+        document.getElementById("client-submit-btn").textContent =
+          "Αποθήκευση";
+        document.getElementById("client-delete-btn").style.display = "none";
+        document.getElementById("client-form-fields").style.display = "none";
+        document.getElementById("client-form-collapsed").style.display =
+          "block";
+        document.getElementById("client-form-collapsed").style.visibility =
+          "visible";
+      }
+      function fmtEuro(n) {
+        const num = parseFloat(n) || 0;
+        return (
+          num.toLocaleString("el-GR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) + " €"
+        );
+      }
+      /* ---- Nested τελετές per family ---- */ function toggleFamilyExpand(
+        clientId,
+      ) {
+        if (expandedFamilies.has(clientId)) expandedFamilies.delete(clientId);
+        else expandedFamilies.add(clientId);
+        renderClients();
+      }
+      function openServiceForm(clientId, serviceId) {
+        serviceFormClientId = clientId;
+        serviceFormEditingId = serviceId || null;
+        expandedFamilies.add(clientId);
+        renderClients();
+      }
+      function closeServiceForm(shouldRender) {
+        serviceFormClientId = null;
+        serviceFormEditingId = null;
+        if (shouldRender !== false) renderClients();
+      }
+      async function submitFamilyService(clientId) {
+        const dt = document.getElementById("fs-datetime").value;
+        if (!dt) {
+          return;
+        }
+        const payload = {
+          type: document.getElementById("fs-type").value,
+          datetime: dt,
+          place: document.getElementById("fs-place").value.trim(),
+          status: document.getElementById("fs-status").value,
+          price: parseFloat(document.getElementById("fs-price").value) || 0,
+        };
+        const list = await loadArr("clients");
+        const client = list.find((c) => c.id === clientId);
+        if (!client) return;
+        if (!client.services) client.services = [];
+        if (serviceFormEditingId !== null) {
+          const idx = client.services.findIndex(
+            (s) => s.id === serviceFormEditingId,
+          );
+          if (idx !== -1)
+            client.services[idx] = {
+              ...client.services[idx],
+              id: serviceFormEditingId,
+              ...payload,
+            };
+        } else {
+          client.services.push({ id: Date.now(), ...payload });
+        }
+        // Μια νέα ή ενημερωμένη τελετή επαναφέρει αυτόματα την οικογένεια
+        // στις Ενεργές, ώστε να μην παραμένει κρυμμένη στο Ιστορικό.
+        client.isArchived = false;
+        client.archivedAt = null;
+        await saveArr("clients", list);
+        closeServiceForm(false);
+        renderClients();
+      }
+      async function deleteFamilyService(clientId, serviceId) {
+        if (!confirm("Να διαγραφεί οριστικά αυτή η τελετή;")) return;
+        const { error } = await sb
+          .from("services")
+          .delete()
+          .eq("id", serviceId)
+          .eq("family_id", clientId);
+        if (error) {
+          showClientError("Η διαγραφή της τελετής δεν ολοκληρώθηκε.");
+          return;
+        }
+        if (
+          serviceFormClientId === clientId &&
+          serviceFormEditingId === serviceId
+        )
+          closeServiceForm(false);
+        renderClients();
+      }
+      async function toggleFamilyServiceStatus(clientId, serviceId) {
+        const list = await loadArr("clients");
+        const client = list.find((c) => c.id === clientId);
+        if (!client) return;
+        let changedToDone = false;
+        client.services = (client.services || []).map((s) =>
+          s.id === serviceId
+            ? {
+                ...s,
+                status: (() => {
+                  changedToDone = s.status === "pending";
+                  return changedToDone ? "done" : "pending";
+                })(),
+              }
+            : s,
+        );
+        const allCompleted =
+          changedToDone &&
+          client.services.length > 0 &&
+          client.services.every((s) => s.status === "done");
+        if (
+          allCompleted &&
+          !client.isArchived &&
+          confirm(
+            "Όλες οι τελετές ολοκληρώθηκαν. Να μεταφερθεί η οικογένεια στο Ιστορικό;",
+          )
+        ) {
+          client.isArchived = true;
+          client.archivedAt = new Date().toISOString();
+          expandedFamilies.delete(clientId);
+        }
+        await saveArr("clients", list);
+        renderClients();
+      }
+      function serviceTypeOptions(current) {
+        const activeNames = serviceTypes
+          .filter((item) => item.is_active)
+          .map((item) => item.name);
+        const names = current && !activeNames.includes(current)
+          ? [current, ...activeNames]
+          : activeNames;
+        return names.map(
+          (t) =>
+            `<option value="${escapeHtml(t)}" ${t === current ? "selected" : ""}>${escapeHtml(t)}</option>`,
+        ).join("");
+      }
+      function serviceFormHTML(client, service) {
+        const isEdit = !!service;
+        return `     <div class="panel-box" style="margin-top:12px; background:var(--white);">       <div class="form-row">         <div><label>Τύπος</label><select id="fs-type">${serviceTypeOptions(service ? service.type : "Κηδεία")}</select></div>         <div><label>Ημερομηνία & ώρα</label><input type="datetime-local" id="fs-datetime" value="${service ? service.datetime : ""}"></div>       </div>       <div class="form-row">         <div><label>Τόπος (εκκλησία / κοιμητήριο)</label><input id="fs-place" placeholder="π.χ. Ι.Ν. Αγίου Νικολάου" value="${escapeHtml(service ? service.place || "" : "")}"></div>         <div><label>Κατάσταση</label>           <select id="fs-status">             <option value="pending" ${!service || service.status === "pending" ? "selected" : ""}>Σε προετοιμασία</option>             <option value="done" ${service && service.status === "done" ? "selected" : ""}>Ολοκληρώθηκε</option>           </select>         </div>       </div>       <div class="form-row">         <div><label>Τιμή τελετής (€)</label><input type="number" step="0.01" id="fs-price" placeholder="0.00" value="${service && service.price ? service.price : ""}"></div>         <div></div>       </div>       <button class="add-btn" onclick="submitFamilyService(${client.id})">${isEdit ? "Αποθήκευση αλλαγών" : "Προσθήκη τελετής"}</button>       <button class="add-btn" style="background:transparent; color:var(--ink-soft); border:1.5px solid var(--line);" onclick="closeServiceForm()">Ακύρωση</button>       ${isEdit ? `<button class="add-btn" style="background:#b5544a;" onclick="deleteFamilyService(${client.id},${service.id})">Διαγραφή</button>` : ""}     </div>`;
+      }
+      function familyServicesBodyHTML(client) {
+        const services = (client.services || [])
+          .slice()
+          .sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+        const rows = services
+          .map(
+            (s) =>
+              `     <tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) openServiceForm(${client.id},${s.id})">       <td>${escapeHtml(s.type)}</td>       <td>${fmtDateTime(s.datetime)}</td>       <td>${escapeHtml(s.place || "—")}</td>       <td>${fmtEuro(s.price)}</td>       <td><span class="badge ${s.status}" style="cursor:pointer;" onclick="toggleFamilyServiceStatus(${client.id},${s.id})">${s.status === "pending" ? "Σε προετοιμασία" : "Ολοκληρώθηκε"}</span></td>       <td style="white-space:nowrap;">         <button class="del-btn" style="color:var(--olive-dark); margin-right:10px;" onclick="openServiceForm(${client.id},${s.id})">Επεξεργασία</button>       </td>       <td>${formatLastHandler(s.lastHandler)}</td>     </tr>`,
+          )
+          .join("");
+        const servicesTotal = services.reduce(
+          (sum, s) => sum + (parseFloat(s.price) || 0),
+          0,
+        );
+        const table = services.length
+          ? `     <table><thead><tr><th>Τύπος</th><th>Ημ/νία & ώρα</th><th>Τόπος</th><th>Τιμή</th><th>Κατάσταση</th><th></th><th>Χρ.</th></tr></thead>     <tbody>${rows}</tbody></table>     <div style="text-align:right; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:10px;">Σύνολο τελετών: ${fmtEuro(servicesTotal)}</div>`
+          : `<div class="empty-note">Δεν έχουν καταχωρηθεί τελετές για αυτή την οικογένεια.</div>`;
+        const showForm = serviceFormClientId === client.id;
+        const editingService =
+          showForm && serviceFormEditingId
+            ? (client.services || []).find((s) => s.id === serviceFormEditingId)
+            : null;
+        const formBlock = showForm
+          ? serviceFormHTML(client, editingService)
+          : `<button class="mini-add-btn" onclick="openServiceForm(${client.id})">+ Νέα τελετή</button>`;
+        return `<div class="family-services-body">${table}${formBlock}</div>`;
+      }
+      function setClientView(mode) {
+        clientViewMode = mode;
+        clientPage = 1;
+        renderClients();
+      }
+      function changeClientPage(page) {
+        clientPage = page;
+        renderClients();
+        document.getElementById("clients-list").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function nextRelevantServiceTime(client) {
+        const now = Date.now();
+        const times = (client.services || [])
+          .filter((s) => s.status === "pending" && s.datetime)
+          .map((s) => new Date(s.datetime).getTime())
+          .filter((time) => Number.isFinite(time) && time >= now)
+          .sort((a, b) => a - b);
+        return times.length ? times[0] : Number.MAX_SAFE_INTEGER;
+      }
+      async function setClientArchived(id, shouldArchive) {
+        const action = shouldArchive ? "μεταφερθεί στο Ιστορικό" : "επανέλθει στις Ενεργές";
+        if (!confirm(`Να ${action} αυτή η οικογένεια;`)) return;
+        const archivedAt = shouldArchive ? new Date().toISOString() : null;
+        const { error } = await sb
+          .from("families")
+          .update({ is_archived: shouldArchive, archived_at: archivedAt })
+          .eq("id", id);
+        if (error) {
+          showClientError("Η αλλαγή στο Ιστορικό δεν ολοκληρώθηκε.");
+          return;
+        }
+        expandedFamilies.delete(id);
+        clientPage = 1;
+        await renderClients();
+        showClientSuccess(shouldArchive ? "Μεταφέρθηκε στο Ιστορικό." : "Επανήλθε στις Ενεργές.");
+      }
+      async function renderClients() {
+        const list = await loadArr("clients");
+
+        const searchInput = document.getElementById("client-search");
+        const term = searchInput ? searchInput.value.trim().toLowerCase() : "";
+        let filteredList = list.filter((c) => {
+          if (term) {
+            const serviceText = (c.services || [])
+              .map((s) => `${s.type || ""} ${s.place || ""} ${s.datetime || ""}`)
+              .join(" ");
+            return `${c.name || ""} ${c.deceased || ""} ${c.phone || ""} ${c.date || ""} ${serviceText}`
+              .toLowerCase()
+              .includes(term);
+          }
+          if (clientViewMode === "archive") return c.isArchived;
+          if (clientViewMode === "active") return !c.isArchived;
+          return true;
+        });
+        filteredList.sort((a, b) => {
+          if (!term && clientViewMode === "active") {
+            const serviceDifference = nextRelevantServiceTime(a) - nextRelevantServiceTime(b);
+            if (serviceDifference !== 0) return serviceDifference;
+          }
+          if (!term && clientViewMode === "archive") {
+            return new Date(b.archivedAt || b.date || 0) - new Date(a.archivedAt || a.date || 0);
+          }
+          return new Date(b.date || 0) - new Date(a.date || 0);
+        });
+        document.querySelectorAll(".client-view-btn").forEach((button) => button.classList.remove("active"));
+        const activeViewButton = document.getElementById(`client-view-${clientViewMode}`);
+        if (activeViewButton) activeViewButton.classList.add("active");
+        const totalPages = Math.max(1, Math.ceil(filteredList.length / CLIENTS_PER_PAGE));
+        clientPage = Math.min(Math.max(1, clientPage), totalPages);
+        const pageStart = (clientPage - 1) * CLIENTS_PER_PAGE;
+        const pageList = filteredList.slice(pageStart, pageStart + CLIENTS_PER_PAGE);
+
+        const container = document.getElementById("clients-list");
+        const rows = pageList
+          .map((c) => {
+            const services = c.services || [];
+            const servicesTotal = services.reduce(
+              (sum, s) => sum + (parseFloat(s.price) || 0),
+              0,
+            );
+            const totalCost = servicesTotal;
+            const finalBalance = totalCost - (parseFloat(c.deposit) || 0);
+            return `<tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editClient(${c.id})">
+      <td><strong>${escapeHtml(c.name || "—")}</strong></td>
+      <td>${escapeHtml(c.phone || "—")}</td>
+      <td>${escapeHtml(c.deceased || "—")}</td>
+      <td>${fmtDate(c.date)}</td>
+      <td>${fmtEuro(totalCost)}</td>
+      <td>${fmtEuro(c.deposit)}</td>
+      <td><strong>${fmtEuro(finalBalance)}</strong></td>
+      <td>${services.length}</td>
+      <td class="notes-cell" title="${escapeHtml(c.notes || "")}">${escapeHtml(c.notes || "—")}</td>
+      <td style="white-space:nowrap;">
+        <button class="del-btn" style="color:var(--olive-dark);margin-right:10px;" onclick="editClient(${c.id})">Επεξεργασία</button>
+        <button class="del-btn" style="color:var(--olive-dark);margin-right:10px;" onclick="openServiceForm(${c.id}); expandedFamilies.add(${c.id}); renderClients()">+ Τελετή</button>
+        <button class="del-btn" style="color:var(--ink-soft);margin-right:10px;" onclick="setClientArchived(${c.id},${!c.isArchived})">${c.isArchived ? "Επαναφορά" : "Στο Ιστορικό"}</button>
+      </td>
+      <td>${formatLastHandler(c.lastHandler)}</td>
+    </tr>
+    ${expandedFamilies.has(c.id) ? `<tr><td colspan="11" style="white-space:normal;min-width:700px;background:var(--ivory-2);"><div style="font-weight:700;margin-bottom:8px;">Τελετές — ${escapeHtml(c.name || "")}</div>${familyServicesBodyHTML(c)}<button class="del-btn" onclick="expandedFamilies.delete(${c.id});renderClients()">Κλείσιμο</button></td></tr>` : ""}`;
+          })
+          .join("");
+        container.innerHTML = pageList.length
+          ? `<div class="clients-table-wrap"><table class="clients-table"><thead><tr><th>Οικογένεια</th><th>Τηλέφωνο</th><th>Θανών/ούσα</th><th>Ημ/νία</th><th>Σύνολο τελετών</th><th>Προκαταβολές</th><th>Υπόλοιπο</th><th>Αρ. τελετών</th><th>Σημειώσεις</th><th>Ενέργειες</th><th>Χρ.</th></tr></thead><tbody>${rows}</tbody></table></div>`
+          : "";
+
+        document.getElementById("clients-empty").style.display =
+          filteredList.length ? "none" : "block";
+        document.getElementById("clients-empty").textContent = term
+          ? "Δεν βρέθηκαν οικογένειες που να ταιριάζουν με την αναζήτηση."
+          : clientViewMode === "archive"
+            ? "Δεν υπάρχουν οικογένειες στο Ιστορικό."
+            : clientViewMode === "active"
+              ? "Δεν υπάρχουν ενεργές οικογένειες."
+              : "Δεν υπάρχουν καταχωρημένες οικογένειες.";
+        const pagination = document.getElementById("clients-pagination");
+        pagination.innerHTML = filteredList.length > CLIENTS_PER_PAGE
+          ? `<button class="mini-add-btn" ${clientPage === 1 ? "disabled" : ""} onclick="changeClientPage(${clientPage - 1})">Προηγούμενη</button>
+             <span style="font-size:13px;font-weight:600;color:var(--ink-soft);">Σελίδα ${clientPage} από ${totalPages}</span>
+             <button class="mini-add-btn" ${clientPage === totalPages ? "disabled" : ""} onclick="changeClientPage(${clientPage + 1})">Επόμενη</button>`
+          : "";
+        document.getElementById("stat-clients").textContent = list.length;
+
+        let allServices = [];
+        list.forEach((c) => {
+          (c.services || []).forEach((s) =>
+            allServices.push({
+              ...s,
+              familyId: c.id,
+              familyName: c.name,
+              familyPhone: c.phone || "",
+            }),
+          );
+        });
+        const pending = allServices.filter((s) => s.status === "pending");
+        document.getElementById("stat-services").textContent = pending.length;
+        const upcomingSorted = pending
+          .slice()
+          .sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+        document.getElementById("overview-services").innerHTML =
+          upcomingSorted
+            .slice(0, 4)
+            .map(
+              (s) =>
+                `<div class="overview-compact-row editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editServiceFromOverview(${s.familyId},${s.id})"><strong>${escapeHtml(s.familyName)}</strong><span class="overview-separator">•</span>${escapeHtml(s.type)}<span class="overview-separator">•</span>${fmtDateTime(s.datetime)}<span class="overview-separator">•</span><strong>Τόπος / Ιερός Ναός:</strong> ${escapeHtml(s.place || "—")}<span class="overview-separator">•</span><strong>Τηλέφωνο:</strong> ${s.familyPhone ? `<a href="tel:${escapeHtml(s.familyPhone)}" style="color:var(--olive-dark);font-weight:600;">${escapeHtml(s.familyPhone)}</a>` : "—"}<span class="overview-separator">•</span><strong>Χρ.:</strong> ${formatLastHandler(s.lastHandler)}</div>`,
+            )
+            .join("") ||
+          '<div class="empty-note">Δεν υπάρχουν τελετές σε εξέλιξη.</div>';
+      }
+
+      /* ---------- Appointments ---------- */ let editingAppointmentId = null;
+      async function addAppointment() {
+        const family = document.getElementById("a-family").value.trim();
+        const dt = document.getElementById("a-datetime").value;
+        if (!family || !dt) {
+          return;
+        }
+        const list = await loadArr("appointments");
+        if (editingAppointmentId !== null) {
+          const idx = list.findIndex((a) => a.id === editingAppointmentId);
+          if (idx !== -1) {
+            list[idx] = {
+              ...list[idx],
+              id: editingAppointmentId,
+              family,
+              datetime: dt,
+              purpose: document.getElementById("a-purpose").value.trim(),
+              phone: document.getElementById("a-phone").value.trim(),
+            };
+          }
+        } else {
+          list.push({
+            id: Date.now(),
+            family,
+            datetime: dt,
+            purpose: document.getElementById("a-purpose").value.trim(),
+            phone: document.getElementById("a-phone").value.trim(),
+          });
+        }
+        await saveArr("appointments", list);
+        const savedId = editingAppointmentId !== null
+          ? editingAppointmentId
+          : list[list.length - 1].id;
+        const { data: confirmed, error: confirmError } = await sb
+          .from("appointments")
+          .select("id")
+          .eq("id", savedId)
+          .single();
+        if (confirmError || !confirmed) {
+          alert("Το ραντεβού δεν επιβεβαιώθηκε στη βάση δεδομένων.");
+          return;
+        }
+        cancelAppointmentEdit();
+        await renderAppointments();
+        showAppointmentSuccess();
+      }
+      function showAppointmentSuccess() {
+        const box = document.getElementById("appointment-success");
+        if (!box) return;
+        box.textContent = "✓ Αποθηκεύτηκε";
+        box.style.display = "block";
+        box.scrollIntoView({ behavior: "smooth", block: "center" });
+        clearTimeout(window._appointmentSuccessTimer);
+        window._appointmentSuccessTimer = setTimeout(() => {
+          box.style.display = "none";
+        }, 4500);
+      }
+      async function deleteAppointment(id) {
+        if (!confirm("Να διαγραφεί οριστικά αυτό το ραντεβού;")) return;
+        const { error } = await sb.from("appointments").delete().eq("id", id);
+        if (error) {
+          alert("Η διαγραφή του ραντεβού δεν ολοκληρώθηκε.");
+          return;
+        }
+        if (editingAppointmentId === id) cancelAppointmentEdit();
+        renderAppointments();
+      }
+      function deleteEditingAppointment() {
+        if (editingAppointmentId === null) return;
+        deleteAppointment(editingAppointmentId);
+      }
+      async function editAppointment(id) {
+        const list = await loadArr("appointments");
+        const a = list.find((x) => x.id === id);
+        if (!a) return;
+        editingAppointmentId = id;
+        document.getElementById("a-family").value = a.family || "";
+        document.getElementById("a-datetime").value = a.datetime || "";
+        document.getElementById("a-purpose").value = a.purpose || "";
+        document.getElementById("a-phone").value = a.phone || "";
+        document.getElementById("appointment-form-title").textContent =
+          "Επεξεργασία ραντεβού";
+        document.getElementById("appointment-submit-btn").textContent =
+          "Αποθήκευση αλλαγών";
+        document.getElementById("appointment-cancel-btn").style.display =
+          "inline-block";
+        document.getElementById("appointment-delete-btn").style.display =
+          "inline-block";
+        document
+          .getElementById("panel-appointments")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function cancelAppointmentEdit() {
+        editingAppointmentId = null;
+        ["a-family", "a-datetime", "a-purpose", "a-phone"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        document.getElementById("appointment-form-title").textContent =
+          "Νέο ραντεβού";
+        document.getElementById("appointment-submit-btn").textContent =
+          "Προσθήκη ραντεβού";
+        document.getElementById("appointment-cancel-btn").style.display =
+          "none";
+        document.getElementById("appointment-delete-btn").style.display =
+          "none";
+      }
+      async function renderAppointments() {
+        let list = await loadArr("appointments");
+        const families = await loadArr("clients");
+        const normalizeFamilyName = (value) =>
+          String(value || "")
+            .toLocaleLowerCase("el-GR")
+            .replace(/^οικογένεια\s+/, "")
+            .trim();
+        list = list.map((appointment) => {
+          const appointmentName = normalizeFamilyName(appointment.family);
+          const matchedFamily = families.find((family) => {
+            const familyName = normalizeFamilyName(family.name);
+            return (
+              familyName === appointmentName ||
+              familyName.includes(appointmentName) ||
+              appointmentName.includes(familyName)
+            );
+          });
+          return {
+            ...appointment,
+            phone: appointment.phone || (matchedFamily ? matchedFamily.phone || "" : ""),
+          };
+        });
+        list.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+        const tbody = document.getElementById("appointments-tbody");
+        tbody.innerHTML = list
+          .map(
+            (a) =>
+              `     <tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editAppointment(${a.id})">       <td>${escapeHtml(a.family)}</td>       <td>${fmtDateTime(a.datetime)}</td>       <td>${escapeHtml(a.purpose || "—")}</td>       <td>${a.phone ? `<a href="tel:${escapeHtml(a.phone)}" style="color:var(--olive-dark);font-weight:600;">${escapeHtml(a.phone)}</a>` : "—"}</td>       <td style="white-space:nowrap;">         <button class="del-btn" style="color:var(--olive-dark); margin-right:10px;" onclick="editAppointment(${a.id})">Επεξεργασία</button>       </td>       <td>${formatLastHandler(a.lastHandler)}</td>     </tr>`,
+          )
+          .join("");
+        document.getElementById("appointments-empty").style.display =
+          list.length ? "none" : "block";
+        const now = new Date();
+        const upcoming = list.filter((a) => new Date(a.datetime) >= now);
+        document.getElementById("stat-appointments").textContent =
+          upcoming.length;
+        document.getElementById("overview-appointments").innerHTML =
+          upcoming
+            .slice(0, 4)
+            .map(
+              (a) =>
+                `<div class="overview-compact-row editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editAppointmentFromOverview(${a.id})"><strong>${escapeHtml(a.family)}</strong><span class="overview-separator">•</span>${fmtDateTime(a.datetime)}<span class="overview-separator">•</span><strong>Σκοπός:</strong> ${escapeHtml(a.purpose || "—")}<span class="overview-separator">•</span><strong>Τηλέφωνο:</strong> ${a.phone ? `<a href="tel:${escapeHtml(a.phone)}" style="color:var(--olive-dark);font-weight:600;">${escapeHtml(a.phone)}</a>` : "—"}<span class="overview-separator">•</span><strong>Χρ.:</strong> ${formatLastHandler(a.lastHandler)}</div>`,
+            )
+            .join("") ||
+          '<div class="empty-note">Δεν υπάρχουν επερχόμενα ραντεβού.</div>';
+      }
+      function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m],
+        );
+      }
+      async function loadCurrentUserProfile() {
+        const { data: authData } = await sb.auth.getUser();
+        const user = authData && authData.user;
+        if (!user) return false;
+        const { data, error } = await sb
+          .from("user_profiles")
+          .select("user_id,user_number,full_name,email,role,is_active")
+          .eq("user_id", user.id)
+          .single();
+        if (error || !data) {
+          console.error("Profile load error:", error);
+          alert("Δεν βρέθηκε προφίλ εξουσιοδοτημένου χρήστη. Εκτελέστε πρώτα τον κώδικα δημιουργίας του πίνακα user_profiles.");
+          await sb.auth.signOut();
+          return false;
+        }
+        if (!data.is_active) {
+          alert("Ο λογαριασμός σας έχει απενεργοποιηθεί.");
+          await sb.auth.signOut();
+          return false;
+        }
+        currentUserProfile = data;
+        const usersTab = document.getElementById("users-admin-tab");
+        usersTab.style.display = data.role === "owner" ? "block" : "none";
+        const safetyTab = document.getElementById("safety-admin-tab");
+        safetyTab.style.display = data.role === "owner" ? "block" : "none";
+        const usersPanel = document.getElementById("panel-users");
+        const safetyPanel = document.getElementById("panel-safety");
+        document.getElementById("contact-email-settings").style.display =
+          data.role === "owner" ? "block" : "none";
+        if (data.role !== "owner") {
+          usersPanel.classList.remove("active");
+          safetyPanel.classList.remove("active");
+          if (["users", "safety"].includes(document.querySelector(".admin-tab.active")?.dataset.panel)) {
+            setAdminTab("overview");
+          }
+        }
+        return true;
+      }
+
+      function showContactFormMessage(message, ok) {
+        const box = document.getElementById("contact-form-message");
+        box.textContent = message;
+        box.style.display = "block";
+        box.style.color = ok ? "#405437" : "#B5544A";
+      }
+
+      async function submitContactForm() {
+        const button = document.getElementById("contact-submit-btn");
+        const payload = {
+          name: document.getElementById("contact-name").value.trim(),
+          phone: document.getElementById("contact-phone").value.trim(),
+          email: document.getElementById("contact-email").value.trim().toLowerCase(),
+          subject: document.getElementById("contact-subject").value.trim(),
+          message: document.getElementById("contact-message").value.trim(),
+          website: document.getElementById("contact-website").value,
+        };
+        if (!payload.name || !payload.phone || !payload.message) {
+          showContactFormMessage("Συμπληρώστε ονοματεπώνυμο, τηλέφωνο και μήνυμα.", false);
+          return;
+        }
+        button.disabled = true;
+        button.textContent = "Αποστολή…";
+        try {
+          const result = await fetch(`${SUPABASE_URL}/functions/v1/contact-submit`, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=UTF-8" },
+            body: JSON.stringify(payload),
+          });
+          const data = await result.json().catch(() => ({}));
+          if (!result.ok || data?.error) throw new Error(data?.error || "Η αποστολή απέτυχε.");
+          ["contact-name", "contact-phone", "contact-email", "contact-subject", "contact-message"].forEach((id) => {
+            document.getElementById(id).value = "";
+          });
+          showContactFormMessage("Το μήνυμά σας στάλθηκε. Θα επικοινωνήσουμε μαζί σας σύντομα.", true);
+        } catch (error) {
+          console.error("Contact form error:", error);
+          showContactFormMessage("Η αποστολή δεν ολοκληρώθηκε. Καλέστε μας στο 210 991 2599.", false);
+        } finally {
+          button.disabled = false;
+          button.textContent = "Αποστολή μηνύματος";
+        }
+      }
+
+      async function renderContactMessages() {
+        if (!currentUserProfile) return;
+        const { data, error } = await sb.from("contact_messages")
+          .select("id,created_at,name,phone,email,subject,message,is_read")
+          .order("created_at", { ascending: false });
+        const list = document.getElementById("contact-messages-list");
+        const empty = document.getElementById("contact-messages-empty");
+        if (error) {
+          list.innerHTML = '<div class="empty-note">Δεν ήταν δυνατή η φόρτωση των μηνυμάτων.</div>';
+          empty.style.display = "none";
+          return;
+        }
+        managedContactMessages = data || [];
+        const unread = managedContactMessages.filter((item) => !item.is_read).length;
+        const count = document.getElementById("messages-count");
+        count.textContent = unread;
+        count.style.display = unread ? "inline-block" : "none";
+        empty.style.display = managedContactMessages.length ? "none" : "block";
+        list.innerHTML = managedContactMessages.length ? `
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>Ημερομηνία</th><th>Ονοματεπώνυμο</th><th>Τηλέφωνο</th><th>Email</th><th>Θέμα</th><th>Κατάσταση</th><th></th></tr></thead>
+            <tbody>${managedContactMessages.map((item) => `
+              <tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editContactMessage(${item.id})" style="background:${item.is_read ? "transparent" : "#fff8eb"};">
+                <td>${fmtDateTime(item.created_at)}</td>
+                <td>${escapeHtml(item.name)}</td>
+                <td><a href="tel:${escapeHtml(item.phone)}">${escapeHtml(item.phone)}</a></td>
+                <td>${item.email ? `<a href="mailto:${escapeHtml(item.email)}">${escapeHtml(item.email)}</a>` : "—"}</td>
+                <td>${escapeHtml(item.subject || "Μήνυμα επικοινωνίας")}</td>
+                <td><span class="badge ${item.is_read ? "done" : "pending"}">${item.is_read ? "Διαβάστηκε" : "Νέο"}</span></td>
+                <td><button class="del-btn" style="color:var(--olive-dark);" onclick="editContactMessage(${item.id})">Επεξεργασία</button></td>
+              </tr>`).join("")}</tbody>
+          </table></div>` : "";
+
+        if (currentUserProfile.role === "owner") {
+          const { data: setting } = await sb.from("app_settings").select("value").eq("key", "contact_recipient_email").maybeSingle();
+          if (setting?.value) document.getElementById("contact-recipient-email").value = setting.value;
+        }
+      }
+
+      async function editContactMessage(id) {
+        const item = managedContactMessages.find((message) => message.id === id);
+        if (!item) return;
+        editingContactMessageId = id;
+        document.getElementById("cm-name").value = item.name || "";
+        document.getElementById("cm-phone").value = item.phone || "";
+        document.getElementById("cm-email").value = item.email || "";
+        document.getElementById("cm-subject").value = item.subject || "";
+        document.getElementById("cm-message").value = item.message || "";
+        document.getElementById("contact-message-editor").style.display = "block";
+        document.getElementById("contact-editor-message").style.display = "none";
+        if (!item.is_read) {
+          const { error } = await sb.from("contact_messages").update({ is_read: true, read_at: new Date().toISOString(), read_by: currentUserProfile.user_id }).eq("id", id);
+          if (!error) {
+            item.is_read = true;
+            await renderContactMessages();
+          }
+        }
+        document.getElementById("contact-message-editor").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function cancelContactMessageEdit() {
+        editingContactMessageId = null;
+        const editor = document.getElementById("contact-message-editor");
+        if (editor) editor.style.display = "none";
+      }
+
+      async function saveContactMessageEdit() {
+        if (editingContactMessageId === null) return;
+        const values = {
+          name: document.getElementById("cm-name").value.trim(),
+          phone: document.getElementById("cm-phone").value.trim(),
+          email: document.getElementById("cm-email").value.trim().toLowerCase() || null,
+          subject: document.getElementById("cm-subject").value.trim() || null,
+          message: document.getElementById("cm-message").value.trim(),
+        };
+        const box = document.getElementById("contact-editor-message");
+        if (!values.name || !values.phone || !values.message) {
+          box.textContent = "Συμπληρώστε όνομα, τηλέφωνο και μήνυμα.";
+          box.style.color = "#B5544A";
+          box.style.display = "block";
+          return;
+        }
+        const { error } = await sb.from("contact_messages").update(values).eq("id", editingContactMessageId);
+        if (error) {
+          box.textContent = "Η αποθήκευση δεν ολοκληρώθηκε.";
+          box.style.color = "#B5544A";
+          box.style.display = "block";
+          return;
+        }
+        cancelContactMessageEdit();
+        await renderContactMessages();
+      }
+
+      async function deleteEditingContactMessage() {
+        if (editingContactMessageId === null) return;
+        if (!confirm("Να διαγραφεί αυτό το μήνυμα;")) return;
+        const { error } = await sb.from("contact_messages").delete().eq("id", editingContactMessageId);
+        if (error) return alert("Δεν ήταν δυνατή η διαγραφή του μηνύματος.");
+        cancelContactMessageEdit();
+        await renderContactMessages();
+      }
+
+      async function markContactMessageRead(id) {
+        const { error } = await sb.from("contact_messages").update({ is_read: true, read_at: new Date().toISOString(), read_by: currentUserProfile.user_id }).eq("id", id);
+        if (error) return alert("Δεν ήταν δυνατή η ενημέρωση του μηνύματος.");
+        await renderContactMessages();
+      }
+
+      async function deleteContactMessage(id) {
+        if (!confirm("Να διαγραφεί αυτό το μήνυμα;")) return;
+        const { error } = await sb.from("contact_messages").delete().eq("id", id);
+        if (error) return alert("Δεν ήταν δυνατή η διαγραφή του μηνύματος.");
+        await renderContactMessages();
+      }
+
+      async function saveContactRecipient() {
+        if (!currentUserProfile || currentUserProfile.role !== "owner") return;
+        const emailInput = document.getElementById("contact-recipient-email");
+        const email = emailInput.value.trim().toLowerCase();
+        emailInput.value = email;
+        const box = document.getElementById("contact-setting-message");
+        if (!email || !emailInput.checkValidity()) {
+          box.textContent = "Γράψτε μια έγκυρη διεύθυνση email.";
+          box.style.color = "#B5544A";
+          box.style.display = "block";
+          return;
+        }
+        const { error } = await sb.from("app_settings").upsert({ key: "contact_recipient_email", value: email, updated_by: currentUserProfile.user_id, updated_at: new Date().toISOString() }, { onConflict: "key" });
+        box.textContent = error ? "Η αλλαγή email δεν αποθηκεύτηκε." : "Το email παραλαβής αποθηκεύτηκε.";
+        box.style.color = error ? "#B5544A" : "#405437";
+        box.style.display = "block";
+      }
+
+      function showUserMessage(message, ok) {
+        const box = document.getElementById("user-message");
+        box.textContent = message;
+        box.style.display = "block";
+        box.style.color = ok ? "#405437" : "#B5544A";
+      }
+
+      async function renderUsers() {
+        if (!currentUserProfile || currentUserProfile.role !== "owner") {
+          managedUsers = [];
+          document.getElementById("users-list").innerHTML = "";
+          document.getElementById("users-empty").style.display = "none";
+          return;
+        }
+        const { data, error } = await sb
+          .from("user_profiles")
+          .select("user_id,user_number,full_name,email,role,is_active,created_at")
+          .eq("is_active", true)
+          .order("user_number", { ascending: true });
+        if (error) {
+          showUserMessage("Δεν ήταν δυνατή η φόρτωση των χρηστών.", false);
+          return;
+        }
+        managedUsers = data || [];
+        const list = document.getElementById("users-list");
+        const empty = document.getElementById("users-empty");
+        empty.style.display = data && data.length ? "none" : "block";
+        list.innerHTML = managedUsers.map((u) => `
+          <div class="detail-row editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editManagedUser('${u.user_id}')">
+            <div style="flex:1;">
+              <div style="font-weight:600;">#${u.user_number || "—"} — ${escapeHtml(u.full_name || "—")}</div>
+              <div style="font-size:13px;color:var(--ink-soft);">${escapeHtml(u.email || "")}</div>
+            </div>
+            <div><span class="badge ${u.is_active ? "done" : "pending"}">${u.is_active ? "Ενεργός" : "Ανενεργός"}</span></div>
+            <div style="min-width:90px;font-size:13px;font-weight:600;color:var(--olive-dark);">${u.role === "owner" ? "Ιδιοκτήτης" : "Υπάλληλος"}</div>
+            <div><button class="del-btn" style="color:var(--olive-dark);" onclick="editManagedUser('${u.user_id}')">Επεξεργασία</button></div>
+          </div>`).join("");
+      }
+
+      function editManagedUser(userId) {
+        if (!currentUserProfile || currentUserProfile.role !== "owner") return;
+        const user = managedUsers.find((item) => item.user_id === userId);
+        if (!user) return;
+        document.getElementById("u-edit-id").value = user.user_id;
+        document.getElementById("u-name").value = user.full_name || "";
+        document.getElementById("u-email").value = user.email || "";
+        document.getElementById("u-password").value = "";
+        document.getElementById("u-role").value = user.role || "employee";
+        document.getElementById("user-form-title").textContent = `Επεξεργασία χρήστη #${user.user_number || "—"}`;
+        document.getElementById("u-password-label").textContent = "Νέος κωδικός (προαιρετικά)";
+        document.getElementById("u-password").placeholder = "Αφήστε κενό για να μη μεταβληθεί";
+        document.getElementById("user-create-btn").textContent = "Αποθήκευση";
+        document.getElementById("user-cancel-btn").style.display = "inline-block";
+        document.getElementById("user-delete-btn").style.display = "inline-block";
+        document.getElementById("user-message").style.display = "none";
+        document.getElementById("u-name").focus();
+      }
+
+      function cancelManagedUserEdit() {
+        const editId = document.getElementById("u-edit-id");
+        if (!editId) return;
+        editId.value = "";
+        document.getElementById("u-name").value = "";
+        document.getElementById("u-email").value = "";
+        document.getElementById("u-password").value = "";
+        document.getElementById("u-role").value = "employee";
+        document.getElementById("user-form-title").textContent = "Νέος χρήστης";
+        document.getElementById("u-password-label").textContent = "Προσωρινός κωδικός";
+        document.getElementById("u-password").placeholder = "Τουλάχιστον 8 χαρακτήρες";
+        document.getElementById("user-create-btn").textContent = "Δημιουργία χρήστη";
+        document.getElementById("user-cancel-btn").style.display = "none";
+        document.getElementById("user-delete-btn").style.display = "none";
+      }
+
+      async function invokeUserManagement(body) {
+        const { data: sessionData, error: sessionError } = await sb.auth.getSession();
+        const accessToken = sessionData?.session?.access_token;
+        if (sessionError || !accessToken) {
+          throw new Error("Η σύνδεσή σας έχει λήξει. Κάντε αποσύνδεση και συνδεθείτε ξανά.");
+        }
+        const { data, error } = await sb.functions.invoke("create-admin-user", {
+          body,
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (error) {
+          if (error.context && typeof error.context.json === "function") {
+            try {
+              const responseBody = await error.context.json();
+              if (responseBody?.error) throw new Error(responseBody.error);
+            } catch (contextError) {
+              if (contextError?.message) throw contextError;
+            }
+          }
+          throw error;
+        }
+        if (data?.error) throw new Error(data.error);
+        return data;
+      }
+
+      async function createManagedUser() {
+        if (!currentUserProfile || currentUserProfile.role !== "owner") return;
+        const userId = document.getElementById("u-edit-id").value;
+        const isEditing = !!userId;
+        const fullName = document.getElementById("u-name").value.trim();
+        const email = document.getElementById("u-email").value.trim().toLowerCase();
+        const password = document.getElementById("u-password").value;
+        const role = document.getElementById("u-role").value;
+        if (!fullName || !email || (!isEditing && password.length < 8) || (isEditing && password && password.length < 8)) {
+          showUserMessage(isEditing ? "Συμπληρώστε όνομα, έγκυρο email και νέο κωδικό τουλάχιστον 8 χαρακτήρων ή αφήστε τον κενό." : "Συμπληρώστε όνομα, έγκυρο email και κωδικό τουλάχιστον 8 χαρακτήρων.", false);
+          return;
+        }
+        const button = document.getElementById("user-create-btn");
+        button.disabled = true;
+        button.textContent = isEditing ? "Αποθήκευση…" : "Δημιουργία…";
+        try {
+          await invokeUserManagement({ action: isEditing ? "update" : "create", userId, fullName, email, password, role });
+          cancelManagedUserEdit();
+          showUserMessage(isEditing ? "Οι αλλαγές αποθηκεύτηκαν." : "Ο χρήστης δημιουργήθηκε επιτυχώς.", true);
+          await renderUsers();
+        } catch (error) {
+          console.error("Create user error:", error);
+          let details = error && error.message ? error.message : "";
+          if (error && error.context && typeof error.context.json === "function") {
+            try {
+              const responseBody = await error.context.json();
+              details = responseBody && responseBody.error ? responseBody.error : "";
+            } catch (_) {}
+          }
+          showUserMessage(
+            details
+              ? `${isEditing ? "Η επεξεργασία" : "Η δημιουργία"} χρήστη δεν ολοκληρώθηκε: ${details}`
+              : `${isEditing ? "Η επεξεργασία" : "Η δημιουργία"} χρήστη δεν ολοκληρώθηκε. Η ασφαλής λειτουργία create-admin-user χρειάζεται ενημέρωση.`,
+            false,
+          );
+        } finally {
+          button.disabled = false;
+          button.textContent = isEditing ? "Αποθήκευση" : "Δημιουργία χρήστη";
+        }
+      }
+
+      async function deleteManagedUser() {
+        if (!currentUserProfile || currentUserProfile.role !== "owner") return;
+        const userId = document.getElementById("u-edit-id").value;
+        const user = managedUsers.find((item) => item.user_id === userId);
+        if (!user) return;
+        if (userId === currentUserProfile.user_id) {
+          showUserMessage("Δεν μπορείτε να διαγράψετε τον λογαριασμό με τον οποίο είστε συνδεδεμένος.", false);
+          return;
+        }
+        if (!confirm(`Να διαγραφεί οριστικά ο χρήστης #${user.user_number} — ${user.full_name};`)) return;
+        const button = document.getElementById("user-delete-btn");
+        button.disabled = true;
+        button.textContent = "Διαγραφή…";
+        try {
+          await invokeUserManagement({ action: "delete", userId });
+          cancelManagedUserEdit();
+          showUserMessage("Ο χρήστης διαγράφηκε.", true);
+          await renderUsers();
+        } catch (error) {
+          showUserMessage(`Η διαγραφή χρήστη δεν ολοκληρώθηκε: ${error?.message || "Άγνωστο σφάλμα"}`, false);
+        } finally {
+          button.disabled = false;
+          button.textContent = "Διαγραφή χρήστη";
+        }
+      }
+
+      function showSafetyMessage(id, message, ok) {
+        const box = document.getElementById(id);
+        box.textContent = message;
+        box.style.display = "block";
+        box.style.color = ok ? "#405437" : "#B5544A";
+      }
+
+      async function loadServiceTypes() {
+        const { data, error } = await sb
+          .from("service_types")
+          .select("id,name,is_active,sort_order,created_at")
+          .order("sort_order", { ascending: true })
+          .order("name", { ascending: true });
+        if (error) {
+          console.warn("Service types load error:", error);
+          serviceTypes = DEFAULT_SERVICE_TYPES.map((name, index) => ({
+            id: null,
+            name,
+            is_active: true,
+            sort_order: (index + 1) * 10,
+          }));
+          return false;
+        }
+        serviceTypes = data && data.length
+          ? data
+          : DEFAULT_SERVICE_TYPES.map((name, index) => ({
+              id: null,
+              name,
+              is_active: true,
+              sort_order: (index + 1) * 10,
+            }));
+        return true;
+      }
+
+      async function renderServiceTypes() {
+        const list = document.getElementById("service-types-list");
+        if (!list || !currentUserProfile || currentUserProfile.role !== "owner") return;
+        const ready = await loadServiceTypes();
+        list.innerHTML = serviceTypes.map((item) => `
+          <div class="detail-row" style="margin-top:8px;">
+            <div style="flex:1;font-weight:600;">${escapeHtml(item.name)}</div>
+            <span class="badge ${item.is_active ? "done" : "pending"}">${item.is_active ? "Ενεργός" : "Ανενεργός"}</span>
+            ${item.id ? `<button class="del-btn" style="color:var(--olive-dark);min-width:110px;" onclick="toggleServiceType(${item.id}, ${item.is_active ? "false" : "true"})">${item.is_active ? "Απενεργοποίηση" : "Ενεργοποίηση"}</button>` : ""}
+          </div>`).join("");
+        if (!ready) {
+          showSafetyMessage("service-type-message", "Απαιτείται πρώτα η εκτέλεση του νέου αρχείου SQL στη βάση.", false);
+        }
+      }
+
+      async function addServiceType() {
+        if (!currentUserProfile || currentUserProfile.role !== "owner") return;
+        const input = document.getElementById("new-service-type");
+        const name = input.value.trim().replace(/\s+/g, " ");
+        if (name.length < 2) {
+          showSafetyMessage("service-type-message", "Γράψτε έναν έγκυρο τύπο τελετής.", false);
+          return;
+        }
+        if (serviceTypes.some((item) => item.name.toLocaleLowerCase("el-GR") === name.toLocaleLowerCase("el-GR"))) {
+          showSafetyMessage("service-type-message", "Αυτός ο τύπος τελετής υπάρχει ήδη.", false);
+          return;
+        }
+        const nextOrder = serviceTypes.reduce((max, item) => Math.max(max, Number(item.sort_order) || 0), 0) + 10;
+        const { error } = await sb.from("service_types").insert({
+          name,
+          is_active: true,
+          sort_order: nextOrder,
+          created_by: currentUserProfile.user_id,
+        });
+        if (error) {
+          showSafetyMessage("service-type-message", `Δεν αποθηκεύτηκε: ${error.message}`, false);
+          return;
+        }
+        input.value = "";
+        showSafetyMessage("service-type-message", "Ο νέος τύπος τελετής προστέθηκε.", true);
+        await renderServiceTypes();
+      }
+
+      async function toggleServiceType(id, makeActive) {
+        if (!currentUserProfile || currentUserProfile.role !== "owner") return;
+        const item = serviceTypes.find((type) => Number(type.id) === Number(id));
+        if (!item) return;
+        if (!makeActive && !confirm(`Να απενεργοποιηθεί ο τύπος «${item.name}»; Οι παλιές τελετές δεν θα επηρεαστούν.`)) return;
+        const { error } = await sb.from("service_types").update({ is_active: makeActive }).eq("id", id);
+        if (error) {
+          showSafetyMessage("service-type-message", `Η αλλαγή δεν αποθηκεύτηκε: ${error.message}`, false);
+          return;
+        }
+        showSafetyMessage("service-type-message", makeActive ? "Ο τύπος ενεργοποιήθηκε." : "Ο τύπος απενεργοποιήθηκε.", true);
+        await renderServiceTypes();
+      }
+
+      function cleanBackupRows(rows, allowedFields) {
+        if (!Array.isArray(rows)) return [];
+        return rows.map((row) => Object.fromEntries(
+          allowedFields.filter((field) => Object.prototype.hasOwnProperty.call(row, field)).map((field) => [field, row[field]])
+        ));
+      }
+
+      async function downloadBackup() {
+        if (!currentUserProfile || currentUserProfile.role !== "owner") return;
+        const button = document.getElementById("backup-download-btn");
+        button.disabled = true;
+        button.textContent = "Δημιουργία backup…";
+        try {
+          const queries = await Promise.all([
+            sb.from("families").select("id,created_at,family_name,deceased_name,contact_name,phone,email,address,notes,advance_payment,is_archived,archived_at"),
+            sb.from("services").select("id,created_at,family_id,service_type,service_datetime,place,price,notes,status"),
+            sb.from("appointments").select("id,created_at,family,appointment_datetime,purpose,phone"),
+            sb.from("contact_messages").select("id,created_at,name,phone,email,subject,message,is_read,read_at"),
+            sb.from("app_settings").select("key,value,updated_at"),
+            sb.from("service_types").select("id,name,is_active,sort_order,created_at"),
+          ]);
+          const failed = queries.find((result) => result.error);
+          if (failed) throw failed.error;
+          const backup = {
+            format: "vachlas-backup",
+            version: 1,
+            created_at: new Date().toISOString(),
+            data: {
+              families: queries[0].data || [],
+              services: queries[1].data || [],
+              appointments: queries[2].data || [],
+              contact_messages: queries[3].data || [],
+              app_settings: queries[4].data || [],
+              service_types: queries[5].data || [],
+            },
+          };
+          const stamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, "-");
+          const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `vachlas-backup-${stamp}.json`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          URL.revokeObjectURL(url);
+          showSafetyMessage("backup-message", "Το backup δημιουργήθηκε και κατέβηκε στον υπολογιστή.", true);
+        } catch (error) {
+          showSafetyMessage("backup-message", `Το backup δεν δημιουργήθηκε: ${error.message || "Άγνωστο σφάλμα"}`, false);
+        } finally {
+          button.disabled = false;
+          button.textContent = "Λήψη νέου backup";
+        }
+      }
+
+      function prepareRestore(event) {
+        const file = event.target.files && event.target.files[0];
+        selectedBackup = null;
+        document.getElementById("restore-run-btn").style.display = "none";
+        document.getElementById("restore-preview").style.display = "none";
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(reader.result);
+            const required = ["families", "services", "appointments", "contact_messages", "app_settings", "service_types"];
+            if (parsed.format !== "vachlas-backup" || parsed.version !== 1 || !parsed.data || !required.every((key) => Array.isArray(parsed.data[key]))) {
+              throw new Error("Το αρχείο δεν είναι έγκυρο backup της εφαρμογής.");
+            }
+            selectedBackup = parsed;
+            const preview = document.getElementById("restore-preview");
+            preview.innerHTML = `<strong>${escapeHtml(file.name)}</strong><br><span style="font-size:13.5px;color:var(--ink-soft);">Ημερομηνία: ${fmtDateTime(parsed.created_at)} · Οικογένειες: ${parsed.data.families.length} · Τελετές: ${parsed.data.services.length} · Ραντεβού: ${parsed.data.appointments.length} · Μηνύματα: ${parsed.data.contact_messages.length}</span>`;
+            preview.style.display = "block";
+            document.getElementById("restore-run-btn").style.display = "inline-flex";
+            document.getElementById("restore-message").style.display = "none";
+          } catch (error) {
+            showSafetyMessage("restore-message", error.message, false);
+          }
+        };
+        reader.onerror = () => showSafetyMessage("restore-message", "Δεν ήταν δυνατή η ανάγνωση του αρχείου.", false);
+        reader.readAsText(file, "UTF-8");
+      }
+
+      async function upsertBackupRows(table, rows, onConflict) {
+        for (let start = 0; start < rows.length; start += 250) {
+          const part = rows.slice(start, start + 250);
+          const { error } = await sb.from(table).upsert(part, { onConflict });
+          if (error) throw new Error(`${table}: ${error.message}`);
+        }
+      }
+
+      async function restoreSelectedBackup() {
+        if (!selectedBackup || !currentUserProfile || currentUserProfile.role !== "owner") return;
+        if (!confirm("Να γίνει επαναφορά από το επιλεγμένο backup; Οι ίδιες εγγραφές θα ενημερωθούν, αλλά δεν θα διαγραφούν νεότερες εγγραφές.")) return;
+        const button = document.getElementById("restore-run-btn");
+        button.disabled = true;
+        button.textContent = "Επαναφορά…";
+        try {
+          const data = selectedBackup.data;
+          const families = cleanBackupRows(data.families, ["id","created_at","family_name","deceased_name","contact_name","phone","email","address","notes","advance_payment","is_archived","archived_at"]);
+          const services = cleanBackupRows(data.services, ["id","created_at","family_id","service_type","service_datetime","place","price","notes","status"]);
+          const appointments = cleanBackupRows(data.appointments, ["id","created_at","family","appointment_datetime","purpose","phone"]);
+          const messages = cleanBackupRows(data.contact_messages, ["id","created_at","name","phone","email","subject","message","is_read","read_at"]);
+          const settings = cleanBackupRows(data.app_settings, ["key","value","updated_at"]).map((row) => ({ ...row, updated_by: currentUserProfile.user_id }));
+          const types = cleanBackupRows(data.service_types, ["id","name","is_active","sort_order","created_at"]).map((row) => ({ ...row, created_by: currentUserProfile.user_id }));
+          await upsertBackupRows("families", families, "id");
+          await upsertBackupRows("services", services, "id");
+          await upsertBackupRows("appointments", appointments, "id");
+          await upsertBackupRows("contact_messages", messages, "id");
+          await upsertBackupRows("app_settings", settings, "key");
+          await upsertBackupRows("service_types", types, "id");
+          const { error: sequenceError } = await sb.rpc("sync_vachlas_sequences");
+          if (sequenceError) console.warn("Sequence sync warning:", sequenceError);
+          showSafetyMessage("restore-message", "Η επαναφορά ολοκληρώθηκε. Τα δεδομένα ανανεώθηκαν.", true);
+          selectedBackup = null;
+          document.getElementById("backup-file-input").value = "";
+          document.getElementById("restore-preview").style.display = "none";
+          button.style.display = "none";
+          await refreshAll();
+        } catch (error) {
+          showSafetyMessage("restore-message", `Η επαναφορά σταμάτησε: ${error.message || "Άγνωστο σφάλμα"}`, false);
+        } finally {
+          button.disabled = false;
+          button.textContent = "Εκτέλεση επαναφοράς";
+        }
+      }
+
+      async function migrateLocalAppointmentsOnce() {
+        let localItems = [];
+        try {
+          const raw = localStorage.getItem("vachlas_appointments");
+          localItems = raw ? JSON.parse(raw) : [];
+        } catch (_) {
+          localItems = [];
+        }
+        if (!Array.isArray(localItems) || !localItems.length) return;
+        const rows = localItems.map((a) => ({
+          id: Number(a.id) || Date.now(),
+          family: a.family || "",
+          appointment_datetime: a.datetime || null,
+          purpose: a.purpose || null,
+          phone: a.phone || null,
+        }));
+        const { error } = await sb
+          .from("appointments")
+          .upsert(rows, { onConflict: "id" });
+        if (error) {
+          console.error("Local appointments migration error:", error);
+          return;
+        }
+        const ids = rows.map((x) => x.id);
+        const { data: confirmed } = await sb
+          .from("appointments")
+          .select("id")
+          .in("id", ids);
+        if ((confirmed || []).length === ids.length) {
+          localStorage.removeItem("vachlas_appointments");
+        }
+      }
+      async function refreshAll() {
+        await loadServiceTypes();
+        await renderClients();
+        await renderAppointments();
+        await renderContactMessages();
+        await renderUsers();
+      }
+
+      sb.auth.onAuthStateChange((_event, session) => {
+        isAuthenticated = !!session;
+        if (document.getElementById("admin").style.display === "block") {
+          document.getElementById("login-screen").style.display =
+            isAuthenticated ? "none" : "flex";
+          document.getElementById("admin-shell").style.display = isAuthenticated
+            ? "flex"
+            : "none";
+        }
+      });
+      window.addEventListener("DOMContentLoaded", () => {
+        setMode(localStorage.getItem("vachlas_mode") === "admin" ? "admin" : "site");
+      });
+    </script>
+  </body>
+</html>

@@ -910,6 +910,24 @@
       .family-services-body table {
         margin-bottom: 10px;
       }
+      .family-edit-services-table,
+      .family-account-table {
+        font-size: 10.5px;
+      }
+      .family-edit-services-table th,
+      .family-account-table th {
+        font-size: 9.5px;
+        padding: 7px 5px;
+        white-space: nowrap;
+      }
+      .family-edit-services-table td,
+      .family-account-table td {
+        padding: 8px 5px;
+        white-space: nowrap;
+      }
+      .family-account-table .money {
+        text-align: right;
+      }
       .mini-add-btn {
         background: transparent;
         border: 1.5px dashed var(--line);
@@ -2117,7 +2135,7 @@
             price: Number(x.price || 0),
             payments: (x.payments || []).map((payment) => ({
               id: Number(payment.id),
-              date: payment.payment_date ? String(payment.payment_date).slice(0, 10) : "",
+              date: payment.payment_date ? String(payment.payment_date).slice(0, 16) : "",
               amount: Number(payment.amount || 0),
               reason: payment.reason || "Έναντι λογαριασμού",
             })),
@@ -2219,7 +2237,7 @@
               (service.payments || []).map((payment) => ({
                 id: Number(payment.id),
                 service_id: Number(service.id),
-                payment_date: payment.date || new Date().toISOString().slice(0, 10),
+                payment_date: payment.date || new Date().toISOString(),
                 amount: Number(payment.amount || 0),
                 reason: payment.reason || "Έναντι λογαριασμού",
               })),
@@ -2312,6 +2330,75 @@
         const field = document.getElementById("c-deposit");
         if (field) field.value = totalAdvance ? totalAdvance.toFixed(2) : "";
       }
+      function buildFamilyAccountRows(services) {
+        const events = [];
+        (services || []).forEach((service) => {
+          events.push({
+            datetime: service.datetime || "",
+            reason: `Τελετή — ${service.type || "—"}`,
+            place: service.place || "—",
+            charge: parseFloat(service.price) || 0,
+            payment: 0,
+          });
+          (service.payments || []).forEach((payment) => {
+            events.push({
+              datetime: payment.date || "",
+              reason: payment.reason || "Έναντι λογαριασμού",
+              place: "—",
+              charge: 0,
+              payment: parseFloat(payment.amount) || 0,
+            });
+          });
+        });
+        events.sort((a, b) => {
+          const dateOrder = String(a.datetime).localeCompare(String(b.datetime));
+          if (dateOrder) return dateOrder;
+          return b.charge - a.charge;
+        });
+        let balance = 0;
+        return events.map((event) => {
+          balance += event.charge - event.payment;
+          return { ...event, balance };
+        });
+      }
+      function familyAccountHTML(services) {
+        const rows = buildFamilyAccountRows(services);
+        if (!rows.length) return "";
+        const totals = rows.reduce((sum, row) => ({
+          charge: sum.charge + row.charge,
+          payment: sum.payment + row.payment,
+        }), { charge: 0, payment: 0 });
+        return `<div id="family-account-print-area" style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;">
+            <h3 style="margin:0;">Αναλυτικός λογαριασμός οικογένειας</h3>
+            <button type="button" class="mini-add-btn family-account-no-print" onclick="printFamilyAccount()">Εκτύπωση λογαριασμού</button>
+          </div>
+          <div class="family-account-print-heading" style="font-size:11px;margin-bottom:10px;color:var(--ink-soft);">
+            Οικογένεια: <strong>${escapeHtml(document.getElementById("c-name")?.value || "—")}</strong> · Θανών/Θανούσα: <strong>${escapeHtml(document.getElementById("c-deceased")?.value || "—")}</strong>
+          </div>
+          <div style="overflow-x:auto;"><table class="family-account-table"><thead><tr>
+            <th>Ημερομηνία &amp; ώρα</th><th>Αιτιολογία</th><th>Τόπος</th><th style="text-align:right;">Χρέωση</th><th style="text-align:right;">Πληρωμή</th><th style="text-align:right;">Υπόλοιπο</th>
+          </tr></thead><tbody>${rows.map((row) => `<tr>
+            <td>${fmtReportEventDate(row.datetime)}</td><td>${escapeHtml(row.reason)}</td><td>${escapeHtml(row.place)}</td>
+            <td class="money">${fmtEuro(row.charge)}</td><td class="money">${fmtEuro(row.payment)}</td><td class="money">${fmtEuro(row.balance)}</td>
+          </tr>`).join("")}</tbody><tfoot><tr style="font-weight:700;border-top:2px solid var(--line);">
+            <td colspan="3">Σύνολα</td><td class="money">${fmtEuro(totals.charge)}</td><td class="money">${fmtEuro(totals.payment)}</td><td class="money">${fmtEuro(totals.charge - totals.payment)}</td>
+          </tr></tfoot></table></div>
+        </div>`;
+      }
+      function printFamilyAccount() {
+        const area = document.getElementById("family-account-print-area");
+        if (!area) return;
+        const family = document.getElementById("c-name")?.value || "Οικογένεια";
+        const popup = window.open("", "_blank", "width=1050,height=760");
+        if (!popup) return;
+        popup.document.write(`<!doctype html><html lang="el"><head><meta charset="utf-8"><title>Λογαριασμός ${escapeHtml(family)}</title><style>
+          body{font-family:Arial,sans-serif;color:#222;margin:28px}h3{font-family:Georgia,serif;margin:0 0 10px}.family-account-no-print{display:none}
+          table{width:100%;border-collapse:collapse;font-size:10.5px}th{font-size:9.5px;text-transform:uppercase;text-align:left;padding:7px 5px;border-bottom:1px solid #d8ccb7;white-space:nowrap}
+          td{padding:8px 5px;border-bottom:1px solid #e5dccb;white-space:nowrap}.money{text-align:right}tfoot td{font-weight:700;border-top:2px solid #d8ccb7}.family-account-print-heading{font-size:11px;margin-bottom:12px}
+        </style></head><body>${area.outerHTML}<script>window.onload=()=>{window.print();window.onafterprint=()=>window.close()}<\/script></body></html>`);
+        popup.document.close();
+      }
       function openAddClientForm() {
         editingClientId = null;
         draftServices = [];
@@ -2337,10 +2424,12 @@
       }
       function paymentRowHTML(prefix, payment) {
         const id = Number(payment && payment.id) || Date.now() + Math.floor(Math.random() * 1000);
-        const date = payment && payment.date ? payment.date : new Date().toISOString().slice(0, 10);
+        const now = new Date();
+        const localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+        const date = payment && payment.date ? String(payment.date).slice(0, 16) : localNow;
         const amount = payment && payment.amount ? payment.amount : "";
         return `<tr data-payment-id="${id}">
-          <td><input type="date" class="${prefix}-payment-date" value="${date}"></td>
+          <td><input type="datetime-local" class="${prefix}-payment-date" value="${date}"></td>
           <td><input type="number" min="0.01" step="0.01" class="${prefix}-payment-amount" value="${amount}" placeholder="0.00"></td>
           <td><input class="${prefix}-payment-reason" value="Έναντι λογαριασμού" readonly></td>
           <td><button type="button" class="del-btn" style="color:#b5544a;" onclick="this.closest('tr').remove()">Διαγραφή</button></td>
@@ -2352,7 +2441,7 @@
             <label style="margin:0;">Πληρωμές τελετής</label>
             <button type="button" class="mini-add-btn" onclick="addPaymentRow('${prefix}')">+ Νέα πληρωμή</button>
           </div>
-          <div style="overflow-x:auto;"><table><thead><tr><th>Ημερομηνία</th><th>Ποσό</th><th>Αιτιολογία</th><th></th></tr></thead>
+          <div style="overflow-x:auto;"><table><thead><tr><th>Ημερομηνία &amp; ώρα</th><th>Ποσό</th><th>Αιτιολογία</th><th></th></tr></thead>
           <tbody id="${prefix}-payments">${(payments || []).map((payment) => paymentRowHTML(prefix, payment)).join("")}</tbody></table></div>
         </div>`;
       }
@@ -2388,7 +2477,7 @@
           form = document.getElementById("draft-service-form");
         if (!list || !form) return;
         list.innerHTML = draftServices.length
-          ? `<table><thead><tr><th>Τύπος</th><th>Ημ/νία & ώρα</th><th>Τόπος</th><th>Χρέωση</th><th>Πληρωμές</th><th>Υπόλοιπο</th><th>Κατάσταση</th><th></th><th>Χρ.</th></tr></thead><tbody>${draftServices.map((x, i) => `<tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editDraftService(${i})"><td>${escapeHtml(x.type)}</td><td>${fmtDateTime(x.datetime)}</td><td>${escapeHtml(x.place || "—")}</td><td>${fmtEuro(x.price)}</td><td>${fmtEuro(servicePaymentsTotal(x))}</td><td>${fmtEuro((parseFloat(x.price) || 0) - servicePaymentsTotal(x))}</td><td><span class="badge ${x.status}">${x.status === "pending" ? "Σε προετοιμασία" : "Ολοκληρώθηκε"}</span></td><td style="white-space:nowrap;"><button type="button" class="del-btn" style="color:var(--olive-dark);margin-right:10px;" onclick="editDraftService(${i})">Επεξεργασία</button></td><td>${formatLastHandler(x.lastHandler)}</td></tr>`).join("")}</tbody></table>`
+          ? `<div style="overflow-x:auto;"><table class="family-edit-services-table"><thead><tr><th>Τύπος</th><th>Ημ/νία & ώρα</th><th>Τόπος</th><th style="text-align:right;">Χρέωση</th><th style="text-align:right;">Πληρωμές</th><th style="text-align:right;">Υπόλοιπο</th><th>Κατάσταση</th><th></th><th>Χρ.</th></tr></thead><tbody>${draftServices.map((x, i) => `<tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editDraftService(${i})"><td>${escapeHtml(x.type)}</td><td>${fmtDateTime(x.datetime)}</td><td>${escapeHtml(x.place || "—")}</td><td style="text-align:right;">${fmtEuro(x.price)}</td><td style="text-align:right;">${fmtEuro(servicePaymentsTotal(x))}</td><td style="text-align:right;">${fmtEuro((parseFloat(x.price) || 0) - servicePaymentsTotal(x))}</td><td><span class="badge ${x.status}">${x.status === "pending" ? "Σε προετοιμασία" : "Ολοκληρώθηκε"}</span></td><td><button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftService(${i})">Επεξεργασία</button></td><td>${formatLastHandler(x.lastHandler)}</td></tr>`).join("")}</tbody></table></div>${familyAccountHTML(draftServices)}`
           : '<div class="empty-note" style="padding:8px 0 4px;">Δεν έχει προστεθεί τελετή.</div>';
         form.innerHTML =
           draftServiceEditingIndex === false
@@ -3071,7 +3160,7 @@
             (service.payments || []).forEach((payment) => {
               if (!payment.date || Number(payment.amount || 0) <= 0) return;
               familyEvents.push({
-                sortDate: `${payment.date}T23:59:00`,
+                sortDate: payment.date,
                 displayDate: payment.date,
                 type: payment.reason || "Έναντι λογαριασμού",
                 charge: 0,
@@ -3159,9 +3248,9 @@
             <td>${escapeHtml(row.type || "—")}</td>
             <td style="white-space:nowrap;">${escapeHtml(row.family || "—")}</td>
             <td style="white-space:nowrap;">${escapeHtml(row.deceased || "—")}</td>
-            <td style="white-space:nowrap;">${fmtEuro(row.charge)}</td>
-            <td style="white-space:nowrap;">${fmtEuro(row.deposit)}</td>
-            <td style="white-space:nowrap;">${fmtEuro(row.balance)}</td>
+            <td style="white-space:nowrap;text-align:right;">${fmtEuro(row.charge)}</td>
+            <td style="white-space:nowrap;text-align:right;">${fmtEuro(row.deposit)}</td>
+            <td style="white-space:nowrap;text-align:right;">${fmtEuro(row.balance)}</td>
           </tr>`).join("");
         const totals = ceremonyReportRows.reduce((sum, row) => ({
           charge: sum.charge + row.charge,
@@ -3170,9 +3259,9 @@
         tfoot.innerHTML = ceremonyReportRows.length ? `
           <tr style="font-weight:700;border-top:2px solid var(--line);">
             <td colspan="4">Σύνολα περιόδου (${ceremonyReportRows.length} εγγραφές)</td>
-            <td style="white-space:nowrap;">${fmtEuro(totals.charge)}</td>
-            <td style="white-space:nowrap;">${fmtEuro(totals.deposit)}</td>
-            <td style="white-space:nowrap;" title="Καθαρή μεταβολή περιόδου">${fmtEuro(totals.charge - totals.deposit)}</td>
+            <td style="white-space:nowrap;text-align:right;">${fmtEuro(totals.charge)}</td>
+            <td style="white-space:nowrap;text-align:right;">${fmtEuro(totals.deposit)}</td>
+            <td style="white-space:nowrap;text-align:right;" title="Καθαρή μεταβολή περιόδου">${fmtEuro(totals.charge - totals.deposit)}</td>
           </tr>` : "";
         document.getElementById("report-excel-btn").style.display = ceremonyReportRows.length ? "inline-block" : "none";
         document.getElementById("report-print-btn").style.display = ceremonyReportRows.length ? "inline-block" : "none";

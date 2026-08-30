@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- VAXLAS_BUILD_2026-08-30_FAMILY_CARD_V3 -->
+<!-- VAXLAS_BUILD_2026-08-30_FAMILY_BALANCE_V4 -->
 <html lang="el">
   <head>
     <meta charset="UTF-8" />
@@ -2142,7 +2142,10 @@
           date: f.created_at ? String(f.created_at).slice(0, 10) : "",
           _createdAt: f.created_at || null,
           notes: f.notes || "",
-          deposit: Number(f.advance_payment || 0),
+          deposit: (f.family_payments || []).reduce(
+            (sum, payment) => sum + Number(payment.amount || 0),
+            0,
+          ),
           _contact_name: f.contact_name || "",
           _email: f.email || "",
           _address: f.address || "",

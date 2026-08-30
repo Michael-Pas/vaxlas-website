@@ -977,7 +977,8 @@
       @media (max-width: 760px) {
         .mode-switch {
           top: 8px;
-          right: 8px;
+          right: auto;
+          left: 10px;
           bottom: auto;
         }
         #site .nav-inner {
@@ -1447,14 +1448,8 @@
           </div>
           <div
             class="admin-tab"
-            onclick="setMode('site')"
-            style="margin-top: auto"
-          >
-            Ιστοσελίδα
-          </div>
-          <div
-            class="admin-tab"
             onclick="logoutAdmin()"
+            style="margin-top: auto"
           >
             Αποσύνδεση
           </div>
@@ -1978,10 +1973,10 @@
           mode === "admin" ? "block" : "none";
         document
           .getElementById("btn-site")
-          .classList.toggle("active", mode === "site");
+          .classList.toggle("active", mode === "admin");
         document
           .getElementById("btn-admin")
-          .classList.toggle("active", mode === "admin");
+          .classList.toggle("active", mode === "site");
         if (mode === "admin") showAdminGate();
         else syncPublicRoute();
       }
@@ -2413,7 +2408,7 @@
         return `<div id="family-account-print-area" style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;">
             <h3 style="margin:0;">Αναλυτικός λογαριασμός οικογένειας</h3>
-            <button type="button" class="mini-add-btn family-account-no-print" onclick="printFamilyAccount()">Εκτύπωση λογαριασμού</button>
+            <button type="button" class="add-btn family-account-no-print" style="margin-top:0;padding:8px 14px;font-size:13px;" onclick="printFamilyAccount()">Εκτύπωση λογαριασμού</button>
           </div>
           <div class="family-account-print-heading" style="font-size:11px;margin-bottom:10px;color:var(--ink-soft);">
             Οικογένεια: <strong>${escapeHtml(document.getElementById("c-name")?.value || "—")}</strong> · Θανών/Θανούσα: <strong>${escapeHtml(document.getElementById("c-deceased")?.value || "—")}</strong>

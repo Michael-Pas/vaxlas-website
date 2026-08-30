@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- VAXLAS_BUILD_2026-08-30_FAMILY_PAYMENTS_V2 -->
+<!-- VAXLAS_BUILD_2026-08-30_FAMILY_CARD_V3 -->
 <html lang="el">
   <head>
     <meta charset="UTF-8" />
@@ -1562,11 +1562,10 @@
                   >
                     <div>
                       <h3 style="margin-bottom: 3px">
-                        Τελετές / Πληρωμές
+                        Καρτέλα οικογένειας
                       </h3>
                       <div style="font-size: 13px; color: var(--ink-soft)">
-                        Μπορείτε να προσθέσετε καμία, μία ή περισσότερες τελετές
-                        τώρα και επιπλέον τελετές οποιαδήποτε στιγμή αργότερα.
+                        Τελετές, πληρωμές και οικονομικό υπόλοιπο της οικογένειας.
                       </div>
                     </div>
                     <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -2384,13 +2383,14 @@
       }
       function buildFamilyAccountRows(services, familyPayments) {
         const events = [];
-        (services || []).forEach((service) => {
+        (services || []).forEach((service, serviceIndex) => {
           events.push({
             datetime: service.datetime || "",
             reason: `Τελετή — ${service.type || "—"}`,
             place: service.place || "—",
             charge: parseFloat(service.price) || 0,
             payment: 0,
+            serviceIndex,
           });
           (service.payments || []).forEach((payment) => {
             events.push({
@@ -2432,7 +2432,7 @@
         }), { charge: 0, payment: 0 });
         return `<div id="family-account-print-area" style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;">
-            <h3 style="margin:0;">Αναλυτικός λογαριασμός οικογένειας</h3>
+            <h3 style="margin:0;">Αναλυτικές κινήσεις</h3>
             <button type="button" class="add-btn family-account-no-print" style="margin-top:0;padding:8px 14px;font-size:13px;" onclick="printFamilyAccount()">Εκτύπωση λογαριασμού</button>
           </div>
           <div class="family-account-print-heading" style="font-size:11px;margin-bottom:10px;color:var(--ink-soft);">
@@ -2443,7 +2443,11 @@
           </tr></thead><tbody>${rows.map((row) => `<tr>
             <td>${fmtReportEventDate(row.datetime)}</td><td>${escapeHtml(row.reason)}</td><td>${escapeHtml(row.place)}</td>
             <td class="money">${fmtEuro(row.charge)}</td><td class="money">${fmtEuro(row.payment)}</td><td class="money">${fmtEuro(row.balance)}</td>
-            <td class="family-account-no-print">${Number.isInteger(row.familyPaymentIndex) ? `<button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftPayment(${row.familyPaymentIndex})">Επεξεργασία πληρωμής</button>` : ""}</td>
+            <td class="family-account-no-print">${Number.isInteger(row.serviceIndex)
+              ? `<button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftService(${row.serviceIndex})">Επεξεργασία</button>`
+              : Number.isInteger(row.familyPaymentIndex)
+                ? `<button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftPayment(${row.familyPaymentIndex})">Επεξεργασία</button>`
+                : ""}</td>
           </tr>`).join("")}</tbody><tfoot><tr style="font-weight:700;border-top:2px solid var(--line);">
             <td colspan="3">Σύνολα</td><td class="money">${fmtEuro(totals.charge)}</td><td class="money">${fmtEuro(totals.payment)}</td><td class="money">${fmtEuro(totals.charge - totals.payment)}</td><td class="family-account-no-print"></td>
           </tr></tfoot></table></div>
@@ -2548,6 +2552,7 @@
           </div>
           <button type="button" class="add-btn" onclick="saveDraftPayment()">${payment ? "Αποθήκευση αλλαγών" : "Αποθήκευση πληρωμής"}</button>
           <button type="button" class="add-btn" style="background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);" onclick="cancelDraftPaymentForm()">Ακύρωση</button>
+          ${payment ? `<button type="button" class="add-btn" style="background:#b5544a;" onclick="deleteDraftPayment(${draftPaymentEditingIndex})">Διαγραφή</button>` : ""}
         </div>`;
       }
       function openDraftPaymentForm() {
@@ -2563,6 +2568,13 @@
         renderDraftServices();
       }
       function cancelDraftPaymentForm() {
+        draftPaymentFormOpen = false;
+        draftPaymentEditingIndex = null;
+        renderDraftServices();
+      }
+      function deleteDraftPayment(index) {
+        if (!confirm("Να διαγραφεί αυτή η πληρωμή;")) return;
+        draftFamilyPayments.splice(index, 1);
         draftPaymentFormOpen = false;
         draftPaymentEditingIndex = null;
         renderDraftServices();
@@ -2602,11 +2614,9 @@
         const list = document.getElementById("draft-services-list"),
           form = document.getElementById("draft-service-form");
         if (!list || !form) return;
-        list.innerHTML = draftServices.length
-          ? `<div style="overflow-x:auto;"><table class="family-edit-services-table"><thead><tr><th>Τύπος</th><th>Ημ/νία & ώρα</th><th>Τόπος</th><th style="text-align:right;">Χρέωση</th><th style="text-align:right;">Πληρωμές</th><th style="text-align:right;">Υπόλοιπο</th><th>Κατάσταση</th><th></th><th>Χρ.</th></tr></thead><tbody>${draftServices.map((x, i) => `<tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editDraftService(${i})"><td>${escapeHtml(x.type)}</td><td>${fmtDateTime(x.datetime)}</td><td>${escapeHtml(x.place || "—")}</td><td style="text-align:right;">${fmtEuro(x.price)}</td><td style="text-align:right;">${fmtEuro(servicePaymentsTotal(x))}</td><td style="text-align:right;">${fmtEuro((parseFloat(x.price) || 0) - servicePaymentsTotal(x))}</td><td><span class="badge ${x.status}">${x.status === "pending" ? "Σε προετοιμασία" : "Ολοκληρώθηκε"}</span></td><td><button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftService(${i})">Επεξεργασία</button></td><td>${formatLastHandler(x.lastHandler)}</td></tr>`).join("")}</tbody></table></div>${familyAccountHTML(draftServices, draftFamilyPayments)}`
-          : draftFamilyPayments.length
-            ? familyAccountHTML([], draftFamilyPayments)
-            : '<div class="empty-note" style="padding:8px 0 4px;">Δεν έχει προστεθεί τελετή ή πληρωμή.</div>';
+        list.innerHTML = draftServices.length || draftFamilyPayments.length
+          ? familyAccountHTML(draftServices, draftFamilyPayments)
+          : '<div class="empty-note" style="padding:8px 0 4px;">Δεν έχει προστεθεί τελετή ή πληρωμή.</div>';
         form.innerHTML = draftPaymentFormOpen
           ? draftPaymentFormHTML()
           : draftServiceEditingIndex === false

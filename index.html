@@ -524,14 +524,42 @@
       }
       @media (max-width: 820px) {
         #epikoinonia { padding-top: 28px; }
+        .nav-inner {
+          flex-wrap: wrap;
+          gap: 10px;
+          padding: 16px;
+        }
         .hero {
           padding: 78px 20px 68px;
           background-position: 58% center;
         }
+        .hero::before {
+          background: linear-gradient(
+            180deg,
+            rgba(250, 246, 239, 0.18) 0%,
+            rgba(250, 246, 239, 0.32) 54%,
+            rgba(250, 246, 239, 0.72) 100%
+          );
+        }
         .desktop-phone-text { display: none !important; }
         .mobile-phone-link { display: inline-flex !important; }
         nav.links {
+          display: flex;
+          order: 3;
+          width: 100%;
+          justify-content: space-between;
+          gap: 12px;
+          overflow-x: auto;
+          padding: 10px 0 2px;
+          border-top: 1px solid var(--line);
+          font-size: 12px;
+          scrollbar-width: none;
+        }
+        nav.links::-webkit-scrollbar {
           display: none;
+        }
+        nav.links a {
+          white-space: nowrap;
         }
         .grid {
           grid-template-columns: 1fr;
@@ -947,10 +975,18 @@
         color: var(--white);
       }
       @media (max-width: 760px) {
+        .mode-switch {
+          top: 8px;
+          right: 8px;
+          bottom: auto;
+        }
+        #site .nav-inner {
+          padding-top: 58px;
+        }
         .admin-nav {
           position: relative;
           width: 100%;
-          padding: 16px 0;
+          padding: 68px 0 16px;
           height: auto;
         }
         .admin-shell {
@@ -1411,8 +1447,14 @@
           </div>
           <div
             class="admin-tab"
-            onclick="logoutAdmin()"
+            onclick="setMode('site')"
             style="margin-top: auto"
+          >
+            Ιστοσελίδα
+          </div>
+          <div
+            class="admin-tab"
+            onclick="logoutAdmin()"
           >
             Αποσύνδεση
           </div>

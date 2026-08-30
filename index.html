@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- VAXLAS_BUILD_2026-08-30_FAMILY_BALANCE_V4 -->
+<!-- VAXLAS_BUILD_2026-08-30_DIRECT_PAYMENTS_V5 -->
 <html lang="el">
   <head>
     <meta charset="UTF-8" />
@@ -2575,14 +2575,27 @@
         draftPaymentEditingIndex = null;
         renderDraftServices();
       }
-      function deleteDraftPayment(index) {
+      async function deleteDraftPayment(index) {
         if (!confirm("Να διαγραφεί αυτή η πληρωμή;")) return;
+        const payment = draftFamilyPayments[index];
+        if (editingClientId !== null && payment && payment.id) {
+          const { error } = await sb
+            .from("service_payments")
+            .delete()
+            .eq("id", Number(payment.id))
+            .eq("family_id", Number(editingClientId));
+          if (error) {
+            showClientError("Η διαγραφή της πληρωμής δεν ολοκληρώθηκε.");
+            return;
+          }
+        }
         draftFamilyPayments.splice(index, 1);
         draftPaymentFormOpen = false;
         draftPaymentEditingIndex = null;
         renderDraftServices();
+        if (editingClientId !== null) await renderClients();
       }
-      function saveDraftPayment() {
+      async function saveDraftPayment() {
         const datetime = document.getElementById("dp-datetime").value;
         const amount = parseFloat(document.getElementById("dp-amount").value) || 0;
         if (!datetime || amount <= 0) return;
@@ -2595,11 +2608,26 @@
           amount,
           reason: "Έναντι λογαριασμού",
         };
+        if (editingClientId !== null) {
+          const { error } = await sb.from("service_payments").upsert({
+            id: Number(savedPayment.id),
+            family_id: Number(editingClientId),
+            service_id: null,
+            payment_date: savedPayment.date,
+            amount: Number(savedPayment.amount),
+            reason: savedPayment.reason,
+          }, { onConflict: "id" });
+          if (error) {
+            showClientError("Η πληρωμή δεν αποθηκεύτηκε.");
+            return;
+          }
+        }
         if (previous) draftFamilyPayments[draftPaymentEditingIndex] = savedPayment;
         else draftFamilyPayments.push(savedPayment);
         draftPaymentFormOpen = false;
         draftPaymentEditingIndex = null;
         renderDraftServices();
+        if (editingClientId !== null) await renderClients();
       }
       function draftServiceFormHTML(service, index) {
         const isEdit = index !== null && index !== undefined;
@@ -3107,10 +3135,7 @@
               (sum, s) => sum + (parseFloat(s.price) || 0),
               0,
             );
-            const advancesTotal = services.reduce(
-              (sum, s) => sum + servicePaymentsTotal(s),
-              0,
-            );
+            const advancesTotal = Number(c.deposit || 0);
             const totalCost = servicesTotal;
             const finalBalance = totalCost - advancesTotal;
             return `<tr class="editable-row" title="Διπλό κλικ για επεξεργασία" ondblclick="if(rowRequestsEdit(event)) editClient(${c.id})">

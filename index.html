@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- VAXLAS_BUILD_2026-08-30_DIRECT_PAYMENTS_V5 -->
+<!-- VAXLAS_BUILD_2026-08-30_RECEIPTS_USER_AUDIT_DBLCLICK_V8 -->
 <html lang="el">
   <head>
     <meta charset="UTF-8" />
@@ -1426,6 +1426,13 @@
           >
             Αναφορές
           </div>
+          <div
+            class="admin-tab"
+            data-panel="receipts"
+            onclick="setAdminTab('receipts')"
+          >
+            Αποδείξεις
+          </div>
           <div class="admin-tab" data-panel="messages" onclick="setAdminTab('messages')">
             Μηνύματα <span id="messages-count" style="display:none;margin-left:5px;background:#b5544a;color:white;border-radius:10px;padding:1px 6px;font-size:11px;"></span>
           </div>
@@ -1764,6 +1771,28 @@
               <div class="empty-note" id="report-empty" style="display:none;">Δεν βρέθηκαν τελετές ή πληρωμές στο επιλεγμένο διάστημα.</div>
             </div>
           </div>
+          <!-- Collection receipts -->
+          <div class="admin-panel" id="panel-receipts">
+            <h2>Αποδείξεις είσπραξης</h2>
+            <p class="sub">Αρχείο μη φορολογικών αποδείξεων είσπραξης.</p>
+            <div class="panel-box">
+              <div class="form-row full">
+                <div>
+                  <label>Αναζήτηση</label>
+                  <input id="receipt-search" placeholder="Αριθμός απόδειξης, οικογένεια ή θανών" oninput="renderReceiptArchiveTable()" />
+                </div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table style="font-size:11px;">
+                  <thead><tr>
+                    <th>Αριθμός</th><th>Ημερομηνία &amp; ώρα</th><th>Οικογένεια</th><th>Θανών/Θανούσα</th><th style="text-align:right;">Ποσό</th><th>Τρόπος</th><th></th>
+                  </tr></thead>
+                  <tbody id="receipts-tbody"></tbody>
+                </table>
+              </div>
+              <div class="empty-note" id="receipts-empty" style="display:none;">Δεν υπάρχουν αποδείξεις είσπραξης.</div>
+            </div>
+          </div>
           <!-- Contact messages -->
           <div class="admin-panel" id="panel-messages">
             <h2>Μηνύματα επικοινωνίας</h2>
@@ -2058,6 +2087,8 @@
         }
         draftServices = [];
         draftFamilyPayments = [];
+        draftFamilyReceipts = [];
+        draftFamilyReceipts = [];
         draftServiceEditingIndex = null;
         draftPaymentFormOpen = false;
         draftPaymentEditingIndex = null;
@@ -2073,6 +2104,7 @@
         document.getElementById("client-delete-btn").style.display = "none";
         document.getElementById("client-form-fields").style.display = "none";
         document.getElementById("client-form-collapsed").style.display = "block";
+        if (name === "receipts") renderReceiptArchive();
         document.getElementById("client-form-collapsed").style.visibility =
           "visible";
         renderDraftServices();
@@ -2127,7 +2159,7 @@
         const { data, error } = await sb
           .from("families")
           .select(
-            "id,created_at,family_name,deceased_name,contact_name,phone,email,address,notes,advance_payment,is_archived,archived_at,last_modified_by,last_editor:user_profiles!families_last_modified_by_fkey(user_number,full_name),family_payments:service_payments!service_payments_family_id_fkey(id,service_id,payment_date,amount,reason),services(id,created_at,family_id,service_type,service_datetime,place,price,notes,status,last_modified_by,last_editor:user_profiles!services_last_modified_by_fkey(user_number,full_name),payments:service_payments!service_payments_service_id_fkey(id,payment_date,amount,reason))",
+            "id,created_at,family_name,deceased_name,contact_name,phone,email,address,notes,advance_payment,is_archived,archived_at,last_modified_by,last_editor:user_profiles!families_last_modified_by_fkey(user_number,full_name),family_payments:service_payments!service_payments_family_id_fkey(id,service_id,payment_date,amount,reason,payment_method,last_modified_by,last_editor:user_profiles!service_payments_last_modified_by_fkey(user_number,full_name)),family_receipts:collection_receipts!collection_receipts_family_id_fkey(id,receipt_number,payment_id,family_id,issued_at,amount,reason,payment_method,family_name,deceased_name,previous_balance,new_balance,status),services(id,created_at,family_id,service_type,service_datetime,place,price,notes,status,last_modified_by,last_editor:user_profiles!services_last_modified_by_fkey(user_number,full_name),payments:service_payments!service_payments_service_id_fkey(id,payment_date,amount,reason,payment_method,last_modified_by,last_editor:user_profiles!service_payments_last_modified_by_fkey(user_number,full_name)))",
           )
           .order("family_name", { ascending: true });
         if (error) {
@@ -2160,7 +2192,25 @@
               date: payment.payment_date ? String(payment.payment_date).slice(0, 16) : "",
               amount: Number(payment.amount || 0),
               reason: payment.reason || "Έναντι λογαριασμού",
+              method: payment.payment_method || "Μετρητά",
+              lastModifiedById: payment.last_modified_by || null,
+              lastHandler: payment.last_editor || null,
             })),
+          receipts: (f.family_receipts || []).map((receipt) => ({
+            id: Number(receipt.id),
+            number: receipt.receipt_number,
+            paymentId: Number(receipt.payment_id),
+            familyId: Number(receipt.family_id),
+            issuedAt: receipt.issued_at,
+            amount: Number(receipt.amount || 0),
+            reason: receipt.reason || "Έναντι λογαριασμού",
+            method: receipt.payment_method || "Μετρητά",
+            familyName: receipt.family_name || "",
+            deceasedName: receipt.deceased_name || "",
+            previousBalance: Number(receipt.previous_balance || 0),
+            newBalance: Number(receipt.new_balance || 0),
+            status: receipt.status || "issued",
+          })),
           services: (f.services || []).map((x) => ({
             id: Number(x.id),
             type: x.service_type || "",
@@ -2175,6 +2225,9 @@
               date: payment.payment_date ? String(payment.payment_date).slice(0, 16) : "",
               amount: Number(payment.amount || 0),
               reason: payment.reason || "Έναντι λογαριασμού",
+              method: payment.payment_method || "Μετρητά",
+              lastModifiedById: payment.last_modified_by || null,
+              lastHandler: payment.last_editor || null,
             })),
             notes: x.notes || "",
             status: x.status || "pending",
@@ -2280,6 +2333,7 @@
                 payment_date: payment.date || new Date().toISOString(),
                 amount: Number(payment.amount || 0),
                 reason: payment.reason || "Έναντι λογαριασμού",
+                payment_method: payment.method || "Μετρητά",
               })),
             ),
             ...(c.payments || []).map((payment) => ({
@@ -2289,6 +2343,7 @@
               payment_date: payment.date || new Date().toISOString(),
               amount: Number(payment.amount || 0),
               reason: payment.reason || "Έναντι λογαριασμού",
+              payment_method: payment.method || "Μετρητά",
             })),
           ];
           const { data: storedPayments, error: storedPaymentsError } = await sb
@@ -2349,6 +2404,8 @@
       let serviceFormEditingId = null;
       let draftServices = [];
       let draftFamilyPayments = [];
+      let draftFamilyReceipts = [];
+      let receiptArchiveRows = [];
       let draftServiceEditingIndex = null;
       let draftPaymentFormOpen = false;
       let draftPaymentEditingIndex = null;
@@ -2394,6 +2451,7 @@
             charge: parseFloat(service.price) || 0,
             payment: 0,
             serviceIndex,
+            lastHandler: service.lastHandler || null,
           });
           (service.payments || []).forEach((payment) => {
             events.push({
@@ -2402,6 +2460,7 @@
               place: "—",
               charge: 0,
               payment: parseFloat(payment.amount) || 0,
+              lastHandler: payment.lastHandler || null,
             });
           });
         });
@@ -2412,7 +2471,10 @@
             place: "—",
             charge: 0,
             payment: parseFloat(payment.amount) || 0,
+            paymentId: Number(payment.id),
+            paymentMethod: payment.method || "Μετρητά",
             familyPaymentIndex: paymentIndex,
+            lastHandler: payment.lastHandler || null,
           });
         });
         events.sort((a, b) => {
@@ -2425,6 +2487,31 @@
           balance += event.charge - event.payment;
           return { ...event, balance };
         });
+      }
+      function receiptForPayment(paymentId) {
+        return (draftFamilyReceipts || []).find(
+          (receipt) => Number(receipt.paymentId) === Number(paymentId),
+        ) || null;
+      }
+      function familyAccountActionHTML(row) {
+        if (Number.isInteger(row.serviceIndex)) {
+          return `<button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftService(${row.serviceIndex})">Επεξεργασία</button>`;
+        }
+        if (!Number.isInteger(row.familyPaymentIndex)) return "";
+        const receipt = receiptForPayment(row.paymentId);
+        return `<div style="display:flex;gap:8px;align-items:center;white-space:nowrap;">
+          <button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftPayment(${row.familyPaymentIndex})">Επεξεργασία</button>
+          <button type="button" class="del-btn" style="color:var(--gold-dark);font-weight:700;" onclick="issueOrPrintReceipt(${row.familyPaymentIndex})">${receipt ? `Απόδειξη ${escapeHtml(receipt.number)}` : "Έκδοση απόδειξης"}</button>
+        </div>`;
+      }
+      function familyAccountRowEditAttribute(row) {
+        if (Number.isInteger(row.serviceIndex)) {
+          return `ondblclick="if(rowRequestsEdit(event)){editDraftService(${row.serviceIndex})}" style="cursor:pointer;" title="Διπλό κλικ για επεξεργασία"`;
+        }
+        if (Number.isInteger(row.familyPaymentIndex)) {
+          return `ondblclick="if(rowRequestsEdit(event)){editDraftPayment(${row.familyPaymentIndex})}" style="cursor:pointer;" title="Διπλό κλικ για επεξεργασία"`;
+        }
+        return "";
       }
       function familyAccountHTML(services, familyPayments) {
         const rows = buildFamilyAccountRows(services, familyPayments);
@@ -2442,17 +2529,13 @@
             Οικογένεια: <strong>${escapeHtml(document.getElementById("c-name")?.value || "—")}</strong> · Θανών/Θανούσα: <strong>${escapeHtml(document.getElementById("c-deceased")?.value || "—")}</strong>
           </div>
           <div style="overflow-x:auto;"><table class="family-account-table"><thead><tr>
-            <th>Ημερομηνία &amp; ώρα</th><th>Αιτιολογία</th><th>Τόπος</th><th style="text-align:right;">Χρέωση</th><th style="text-align:right;">Πληρωμή</th><th style="text-align:right;">Υπόλοιπο</th><th class="family-account-no-print"></th>
-          </tr></thead><tbody>${rows.map((row) => `<tr>
-            <td>${fmtReportEventDate(row.datetime)}</td><td>${escapeHtml(row.reason)}</td><td>${escapeHtml(row.place)}</td>
+            <th>Ημερομηνία &amp; ώρα</th><th>Αιτιολογία</th><th>Τόπος</th><th>Αρ. χρήστη</th><th style="text-align:right;">Χρέωση</th><th style="text-align:right;">Πληρωμή</th><th style="text-align:right;">Υπόλοιπο</th><th class="family-account-no-print"></th>
+          </tr></thead><tbody>${rows.map((row) => `<tr ${familyAccountRowEditAttribute(row)}>
+            <td>${fmtReportEventDate(row.datetime)}</td><td>${escapeHtml(row.reason)}</td><td>${escapeHtml(row.place)}</td><td>${formatLastHandler(row.lastHandler)}</td>
             <td class="money">${fmtEuro(row.charge)}</td><td class="money">${fmtEuro(row.payment)}</td><td class="money">${fmtEuro(row.balance)}</td>
-            <td class="family-account-no-print">${Number.isInteger(row.serviceIndex)
-              ? `<button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftService(${row.serviceIndex})">Επεξεργασία</button>`
-              : Number.isInteger(row.familyPaymentIndex)
-                ? `<button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftPayment(${row.familyPaymentIndex})">Επεξεργασία</button>`
-                : ""}</td>
+            <td class="family-account-no-print">${familyAccountActionHTML(row)}</td>
           </tr>`).join("")}</tbody><tfoot><tr style="font-weight:700;border-top:2px solid var(--line);">
-            <td colspan="3">Σύνολα</td><td class="money">${fmtEuro(totals.charge)}</td><td class="money">${fmtEuro(totals.payment)}</td><td class="money">${fmtEuro(totals.charge - totals.payment)}</td><td class="family-account-no-print"></td>
+            <td colspan="4">Σύνολα</td><td class="money">${fmtEuro(totals.charge)}</td><td class="money">${fmtEuro(totals.payment)}</td><td class="money">${fmtEuro(totals.charge - totals.payment)}</td><td class="family-account-no-print"></td>
           </tr></tfoot></table></div>
         </div>`;
       }
@@ -2468,6 +2551,130 @@
           td{padding:8px 5px;border-bottom:1px solid #e5dccb;white-space:nowrap}.money{text-align:right}tfoot td{font-weight:700;border-top:2px solid #d8ccb7}.family-account-print-heading{font-size:11px;margin-bottom:12px}
         </style></head><body>${area.outerHTML}<script>window.onload=()=>{window.print();window.onafterprint=()=>window.close()}<\/script></body></html>`);
         popup.document.close();
+      }
+      function normalizeReceipt(receipt) {
+        return {
+          id: Number(receipt.id),
+          number: receipt.receipt_number || receipt.number,
+          paymentId: Number(receipt.payment_id || receipt.paymentId),
+          familyId: Number(receipt.family_id || receipt.familyId),
+          issuedAt: receipt.issued_at || receipt.issuedAt,
+          amount: Number(receipt.amount || 0),
+          reason: receipt.reason || "Έναντι λογαριασμού",
+          method: receipt.payment_method || receipt.method || "Μετρητά",
+          familyName: receipt.family_name || receipt.familyName || "",
+          deceasedName: receipt.deceased_name || receipt.deceasedName || "",
+          previousBalance: Number(receipt.previous_balance ?? receipt.previousBalance ?? 0),
+          newBalance: Number(receipt.new_balance ?? receipt.newBalance ?? 0),
+          status: receipt.status || "issued",
+        };
+      }
+      function greekIntegerWords(value) {
+        const n = Math.max(0, Math.floor(Number(value) || 0));
+        if (n === 0) return "μηδέν";
+        const ones = ["", "ένα", "δύο", "τρία", "τέσσερα", "πέντε", "έξι", "επτά", "οκτώ", "εννέα"];
+        const teens = ["δέκα", "έντεκα", "δώδεκα", "δεκατρία", "δεκατέσσερα", "δεκαπέντε", "δεκαέξι", "δεκαεπτά", "δεκαοκτώ", "δεκαεννέα"];
+        const tens = ["", "", "είκοσι", "τριάντα", "σαράντα", "πενήντα", "εξήντα", "εβδομήντα", "ογδόντα", "ενενήντα"];
+        const hundreds = ["", "εκατό", "διακόσια", "τριακόσια", "τετρακόσια", "πεντακόσια", "εξακόσια", "επτακόσια", "οκτακόσια", "εννιακόσια"];
+        function underThousand(number) {
+          const parts = [];
+          const h = Math.floor(number / 100);
+          const rest = number % 100;
+          if (h) parts.push(h === 1 && rest ? "εκατόν" : hundreds[h]);
+          if (rest >= 20) {
+            parts.push(tens[Math.floor(rest / 10)]);
+            if (rest % 10) parts.push(ones[rest % 10]);
+          } else if (rest >= 10) parts.push(teens[rest - 10]);
+          else if (rest) parts.push(ones[rest]);
+          return parts.join(" ");
+        }
+        if (n < 1000) return underThousand(n);
+        if (n < 1000000) {
+          const thousands = Math.floor(n / 1000);
+          const rest = n % 1000;
+          const prefix = thousands === 1 ? "χίλια" : `${underThousand(thousands)} χιλιάδες`;
+          return `${prefix}${rest ? ` ${underThousand(rest)}` : ""}`;
+        }
+        return n.toLocaleString("el-GR");
+      }
+      function amountInGreekWords(amount) {
+        const value = Math.round((Number(amount) || 0) * 100);
+        const euros = Math.floor(value / 100);
+        const cents = value % 100;
+        return `${greekIntegerWords(euros)} ευρώ${cents ? ` και ${greekIntegerWords(cents)} λεπτά` : ""}`;
+      }
+      async function issueOrPrintReceipt(paymentIndex) {
+        const payment = draftFamilyPayments[paymentIndex];
+        if (!payment) return;
+        const existing = receiptForPayment(payment.id);
+        if (existing) {
+          printCollectionReceipt(existing);
+          return;
+        }
+        if (editingClientId === null) {
+          alert("Αποθηκεύστε πρώτα την οικογένεια και μετά εκδώστε την απόδειξη.");
+          return;
+        }
+        const { data, error } = await sb.rpc("issue_collection_receipt", {
+          p_payment_id: Number(payment.id),
+        });
+        if (error || !data || !data.length) {
+          showClientError("Η απόδειξη δεν εκδόθηκε.");
+          return;
+        }
+        const receipt = normalizeReceipt(data[0]);
+        draftFamilyReceipts.push(receipt);
+        renderDraftServices();
+        await renderClients();
+        printCollectionReceipt(receipt);
+      }
+      function printCollectionReceipt(receiptInput) {
+        const receipt = normalizeReceipt(receiptInput);
+        const popup = window.open("", "_blank", "width=820,height=850");
+        if (!popup) return;
+        const issued = new Date(receipt.issuedAt);
+        const dateText = issued.toLocaleDateString("el-GR");
+        const timeText = issued.toLocaleTimeString("el-GR", { hour: "2-digit", minute: "2-digit" });
+        popup.document.write(`<!doctype html><html lang="el"><head><meta charset="utf-8"><title>Απόδειξη ${escapeHtml(receipt.number)}</title><style>
+          @page{size:A5 portrait;margin:12mm}*{box-sizing:border-box}body{font-family:Georgia,'Times New Roman',serif;color:#34291f;margin:0;background:#fff}.sheet{padding:8px}.head{display:grid;grid-template-columns:1fr auto;gap:20px;padding-bottom:14px;border-bottom:2px solid #c99a43}.brand{font-size:20px;font-weight:700}.sub{font:700 11px Arial,sans-serif;color:#9b6b22;text-transform:uppercase;margin-top:3px;letter-spacing:.04em}.details,.meta{font:11px/1.5 Arial,sans-serif;color:#615548;margin-top:8px}.meta{text-align:right;white-space:nowrap}.title{text-align:center;text-transform:uppercase;letter-spacing:.08em;font-size:21px;margin:22px 0}.row{display:grid;grid-template-columns:140px 1fr;gap:10px;padding:7px 0;border-bottom:1px solid #e6dccb;font-size:13px}.label{font:700 10px Arial,sans-serif;color:#756454;text-transform:uppercase}.amount{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin:18px 0;padding:13px 15px;background:#f5ead7;border-left:4px solid #c99a43}.caption{font:10px Arial,sans-serif;text-transform:uppercase;color:#6f6255}.words{font-size:13px;margin-top:4px}.value{font:700 21px Arial,sans-serif;color:#8f611d}.balances{display:grid;grid-template-columns:1fr 1fr;gap:12px}.balance{border:1px solid #ddd0bc;padding:9px 11px;font:10px Arial,sans-serif}.balance strong{display:block;margin-top:4px;font-size:15px}.note{margin:18px 0 24px;padding:8px;text-align:center;background:#f7f2e9;font:700 9px Arial,sans-serif;text-transform:uppercase;color:#6b5c4e}.sign{display:grid;grid-template-columns:1fr 1fr;gap:45px;margin-top:35px;font:10px Arial,sans-serif;text-align:center}.line{border-top:1px solid #76685b;padding-top:7px}@media print{body{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+        </style></head><body><div class="sheet"><div class="head"><div><div class="brand">Δαβλάντη Φωτεινή Νικόλαος</div><div class="sub">Γραφείο Τελετών</div><div class="details">Αρχιμήδους 47, Τ.Κ. 16343, Ηλιούπολη<br>ΑΦΜ 072099383</div></div><div class="meta"><strong>Αρ. απόδειξης:</strong> ${escapeHtml(receipt.number)}<br><strong>Ημερομηνία:</strong> ${dateText}<br><strong>Ώρα:</strong> ${timeText}</div></div><h1 class="title">Απόδειξη Είσπραξης</h1><div class="row"><span class="label">Οικογένεια</span><strong>${escapeHtml(receipt.familyName)}</strong></div><div class="row"><span class="label">Θανών / Θανούσα</span><strong>${escapeHtml(receipt.deceasedName || "—")}</strong></div><div class="row"><span class="label">Αιτιολογία</span><span>${escapeHtml(receipt.reason)}</span></div><div class="row"><span class="label">Τρόπος πληρωμής</span><span>${escapeHtml(receipt.method)}</span></div><div class="amount"><div><div class="caption">Λάβαμε το ποσό</div><div class="words">${escapeHtml(amountInGreekWords(receipt.amount))}</div></div><div class="value">${fmtEuro(receipt.amount)}</div></div><div class="balances"><div class="balance">Υπόλοιπο πριν την πληρωμή<strong>${fmtEuro(receipt.previousBalance)}</strong></div><div class="balance">Νέο υπόλοιπο<strong>${fmtEuro(receipt.newBalance)}</strong></div></div><div class="note">Η παρούσα αποτελεί απλή απόδειξη είσπραξης και δεν αποτελεί φορολογικό στοιχείο.</div><div class="sign"><div class="line">Ο καταβάλλων</div><div class="line">Για το γραφείο τελετών</div></div></div><script>window.onload=()=>{window.print();window.onafterprint=()=>window.close()}<\/script></body></html>`);
+        popup.document.close();
+      }
+      async function renderReceiptArchive() {
+        const { data, error } = await sb
+          .from("collection_receipts")
+          .select("id,receipt_number,payment_id,family_id,issued_at,amount,reason,payment_method,family_name,deceased_name,previous_balance,new_balance,status")
+          .order("issued_at", { ascending: false });
+        if (error) {
+          receiptArchiveRows = [];
+          renderReceiptArchiveTable();
+          return;
+        }
+        receiptArchiveRows = (data || []).map(normalizeReceipt);
+        renderReceiptArchiveTable();
+      }
+      function renderReceiptArchiveTable() {
+        const tbody = document.getElementById("receipts-tbody");
+        const empty = document.getElementById("receipts-empty");
+        if (!tbody || !empty) return;
+        const search = (document.getElementById("receipt-search")?.value || "").trim().toLowerCase();
+        const rows = receiptArchiveRows.filter((receipt) =>
+          `${receipt.number} ${receipt.familyName} ${receipt.deceasedName}`.toLowerCase().includes(search),
+        );
+        tbody.innerHTML = rows.map((receipt) => `<tr>
+          <td><strong>${escapeHtml(receipt.number)}</strong></td>
+          <td>${fmtDateTime(receipt.issuedAt)}</td>
+          <td>${escapeHtml(receipt.familyName || "—")}</td>
+          <td>${escapeHtml(receipt.deceasedName || "—")}</td>
+          <td style="text-align:right;">${fmtEuro(receipt.amount)}</td>
+          <td>${escapeHtml(receipt.method)}</td>
+          <td><button type="button" class="del-btn" style="color:var(--gold-dark);font-weight:700;" onclick="printArchivedReceipt(${receipt.id})">Προβολή / Εκτύπωση</button></td>
+        </tr>`).join("");
+        empty.style.display = rows.length ? "none" : "block";
+      }
+      function printArchivedReceipt(receiptId) {
+        const receipt = receiptArchiveRows.find((item) => Number(item.id) === Number(receiptId));
+        if (receipt) printCollectionReceipt(receipt);
       }
       function openAddClientForm() {
         editingClientId = null;
@@ -2542,6 +2749,7 @@
           ? String(payment.date).slice(0, 16)
           : localNow;
         const paymentAmount = payment ? payment.amount : "";
+        const paymentMethod = payment ? payment.method || "Μετρητά" : "Μετρητά";
         return `<div class="panel-box" style="margin-top:12px;background:var(--ivory-2);">
           <h3 style="margin-bottom:14px;">${payment ? "Επεξεργασία πληρωμής" : "Νέα πληρωμή"}</h3>
           <div class="form-row full">
@@ -2552,6 +2760,14 @@
           </div>
           <div class="form-row full">
             <div><label>Αιτιολογία</label><input value="Έναντι λογαριασμού" readonly></div>
+          </div>
+          <div class="form-row full">
+            <div><label>Τρόπος πληρωμής</label><select id="dp-method">
+              <option value="Μετρητά" ${paymentMethod === "Μετρητά" ? "selected" : ""}>Μετρητά</option>
+              <option value="POS" ${paymentMethod === "POS" ? "selected" : ""}>POS</option>
+              <option value="Τραπεζική κατάθεση" ${paymentMethod === "Τραπεζική κατάθεση" ? "selected" : ""}>Τραπεζική κατάθεση</option>
+              <option value="Άλλο" ${paymentMethod === "Άλλο" ? "selected" : ""}>Άλλο</option>
+            </select></div>
           </div>
           <button type="button" class="add-btn" onclick="saveDraftPayment()">${payment ? "Αποθήκευση αλλαγών" : "Αποθήκευση πληρωμής"}</button>
           <button type="button" class="add-btn" style="background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);" onclick="cancelDraftPaymentForm()">Ακύρωση</button>
@@ -2565,6 +2781,11 @@
         renderDraftServices();
       }
       function editDraftPayment(index) {
+        const payment = draftFamilyPayments[index];
+        if (payment && receiptForPayment(payment.id)) {
+          alert("Η πληρωμή έχει εκδοθεί σε απόδειξη και δεν μπορεί να τροποποιηθεί. Η διαδικασία ακύρωσης απόδειξης θα προστεθεί σε επόμενη έκδοση.");
+          return;
+        }
         draftServiceEditingIndex = null;
         draftPaymentEditingIndex = index;
         draftPaymentFormOpen = true;
@@ -2578,6 +2799,10 @@
       async function deleteDraftPayment(index) {
         if (!confirm("Να διαγραφεί αυτή η πληρωμή;")) return;
         const payment = draftFamilyPayments[index];
+        if (payment && receiptForPayment(payment.id)) {
+          alert("Η πληρωμή έχει εκδοθεί σε απόδειξη και δεν μπορεί να διαγραφεί.");
+          return;
+        }
         if (editingClientId !== null && payment && payment.id) {
           const { error } = await sb
             .from("service_payments")
@@ -2598,6 +2823,7 @@
       async function saveDraftPayment() {
         const datetime = document.getElementById("dp-datetime").value;
         const amount = parseFloat(document.getElementById("dp-amount").value) || 0;
+        const method = document.getElementById("dp-method").value;
         if (!datetime || amount <= 0) return;
         const previous = Number.isInteger(draftPaymentEditingIndex)
           ? draftFamilyPayments[draftPaymentEditingIndex]
@@ -2607,6 +2833,7 @@
           date: datetime,
           amount,
           reason: "Έναντι λογαριασμού",
+          method,
         };
         if (editingClientId !== null) {
           const { error } = await sb.from("service_payments").upsert({
@@ -2616,6 +2843,7 @@
             payment_date: savedPayment.date,
             amount: Number(savedPayment.amount),
             reason: savedPayment.reason,
+            payment_method: savedPayment.method,
           }, { onConflict: "id" });
           if (error) {
             showClientError("Η πληρωμή δεν αποθηκεύτηκε.");
@@ -2852,6 +3080,7 @@
         document.getElementById("c-deposit").value = c.deposit || "";
         draftServices = (c.services || []).map((x) => ({ ...x }));
         draftFamilyPayments = (c.payments || []).map((payment) => ({ ...payment }));
+        draftFamilyReceipts = (c.receipts || []).map((receipt) => ({ ...receipt }));
         draftServiceEditingIndex = null;
         draftPaymentFormOpen = false;
         draftPaymentEditingIndex = null;
@@ -2875,6 +3104,7 @@
         editingClientId = null;
         draftServices = [];
         draftFamilyPayments = [];
+        draftFamilyReceipts = [];
         draftServiceEditingIndex = null;
         draftPaymentFormOpen = false;
         draftPaymentEditingIndex = null;
@@ -4089,13 +4319,15 @@
             sb.from("contact_messages").select("id,created_at,name,phone,email,subject,message,is_read,read_at"),
             sb.from("app_settings").select("key,value,updated_at"),
             sb.from("service_types").select("id,name,is_active,sort_order,created_at"),
-            sb.from("service_payments").select("id,created_at,family_id,service_id,payment_date,amount,reason"),
+            sb.from("service_payments").select("id,created_at,family_id,service_id,payment_date,amount,reason,payment_method"),
+            sb.from("collection_receipts").select("id,created_at,receipt_year,receipt_sequence,receipt_number,payment_id,family_id,issued_at,amount,reason,payment_method,family_name,deceased_name,previous_balance,new_balance,issued_by,status,cancelled_at,cancelled_by,cancellation_reason"),
+            sb.from("collection_receipt_counters").select("receipt_year,last_number"),
           ]);
           const failed = queries.find((result) => result.error);
           if (failed) throw failed.error;
           const backup = {
             format: "vachlas-backup",
-            version: 2,
+            version: 3,
             created_at: new Date().toISOString(),
             data: {
               families: queries[0].data || [],
@@ -4105,6 +4337,8 @@
               app_settings: queries[4].data || [],
               service_types: queries[5].data || [],
               service_payments: queries[6].data || [],
+              collection_receipts: queries[7].data || [],
+              collection_receipt_counters: queries[8].data || [],
             },
           };
           const stamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, "-");
@@ -4137,12 +4371,12 @@
           try {
             const parsed = JSON.parse(reader.result);
             const required = ["families", "services", "appointments", "contact_messages", "app_settings", "service_types"];
-            if (parsed.format !== "vachlas-backup" || ![1, 2].includes(parsed.version) || !parsed.data || !required.every((key) => Array.isArray(parsed.data[key]))) {
+            if (parsed.format !== "vachlas-backup" || ![1, 2, 3].includes(parsed.version) || !parsed.data || !required.every((key) => Array.isArray(parsed.data[key]))) {
               throw new Error("Το αρχείο δεν είναι έγκυρο backup της εφαρμογής.");
             }
             selectedBackup = parsed;
             const preview = document.getElementById("restore-preview");
-            preview.innerHTML = `<strong>${escapeHtml(file.name)}</strong><br><span style="font-size:13.5px;color:var(--ink-soft);">Ημερομηνία: ${fmtDateTime(parsed.created_at)} · Οικογένειες: ${parsed.data.families.length} · Τελετές: ${parsed.data.services.length} · Ραντεβού: ${parsed.data.appointments.length} · Μηνύματα: ${parsed.data.contact_messages.length}</span>`;
+            preview.innerHTML = `<strong>${escapeHtml(file.name)}</strong><br><span style="font-size:13.5px;color:var(--ink-soft);">Ημερομηνία: ${fmtDateTime(parsed.created_at)} · Οικογένειες: ${parsed.data.families.length} · Τελετές: ${parsed.data.services.length} · Πληρωμές: ${(parsed.data.service_payments || []).length} · Αποδείξεις: ${(parsed.data.collection_receipts || []).length} · Ραντεβού: ${parsed.data.appointments.length} · Μηνύματα: ${parsed.data.contact_messages.length}</span>`;
             preview.style.display = "block";
             document.getElementById("restore-run-btn").style.display = "inline-flex";
             document.getElementById("restore-message").style.display = "none";
@@ -4175,12 +4409,14 @@
           const serviceFamilyById = new Map(
             services.map((service) => [Number(service.id), Number(service.family_id)])
           );
-          const servicePayments = cleanBackupRows(data.service_payments || [], ["id","created_at","family_id","service_id","payment_date","amount","reason"])
+          const servicePayments = cleanBackupRows(data.service_payments || [], ["id","created_at","family_id","service_id","payment_date","amount","reason","payment_method"])
             .map((payment) => ({
               ...payment,
               family_id: payment.family_id || serviceFamilyById.get(Number(payment.service_id))
             }))
             .filter((payment) => payment.family_id);
+          const collectionReceipts = cleanBackupRows(data.collection_receipts || [], ["id","created_at","receipt_year","receipt_sequence","receipt_number","payment_id","family_id","issued_at","amount","reason","payment_method","family_name","deceased_name","previous_balance","new_balance","issued_by","status","cancelled_at","cancelled_by","cancellation_reason"]);
+          const receiptCounters = cleanBackupRows(data.collection_receipt_counters || [], ["receipt_year","last_number"]);
           const appointments = cleanBackupRows(data.appointments, ["id","created_at","family","appointment_datetime","purpose","phone"]);
           const messages = cleanBackupRows(data.contact_messages, ["id","created_at","name","phone","email","subject","message","is_read","read_at"]);
           const settings = cleanBackupRows(data.app_settings, ["key","value","updated_at"]).map((row) => ({ ...row, updated_by: currentUserProfile.user_id }));
@@ -4188,6 +4424,8 @@
           await upsertBackupRows("families", families, "id");
           await upsertBackupRows("services", services, "id");
           await upsertBackupRows("service_payments", servicePayments, "id");
+          await upsertBackupRows("collection_receipts", collectionReceipts, "id");
+          await upsertBackupRows("collection_receipt_counters", receiptCounters, "receipt_year");
           await upsertBackupRows("appointments", appointments, "id");
           await upsertBackupRows("contact_messages", messages, "id");
           await upsertBackupRows("app_settings", settings, "key");

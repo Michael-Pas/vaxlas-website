@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- VAXLAS_BUILD_2026-08-30_RECEIPTS_USER_AUDIT_DBLCLICK_V8 -->
+<!-- VAXLAS_BUILD_2026-08-30_RECEIPT_REVISION_PRINT_CLOSE_V10 -->
 <html lang="el">
   <head>
     <meta charset="UTF-8" />
@@ -1550,6 +1550,11 @@
                   </div>
                 </div>
                 <input type="hidden" id="c-deposit" />
+                <div style="margin-top:16px;margin-bottom:2px;">
+                  <button class="add-btn" id="client-submit-btn" onclick="addClient()">Αποθήκευση</button>
+                  <button class="add-btn" id="client-cancel-btn" style="background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);" onclick="cancelClientEdit()">Ακύρωση</button>
+                  <button class="add-btn" id="client-delete-btn" style="display:none;background:#b5544a;" onclick="deleteEditingClient()">Διαγραφή</button>
+                </div>
                 <div
                   style="
                     border-top: 1px solid var(--line);
@@ -1587,33 +1592,6 @@
                   <div id="draft-services-list"></div>
                   <div id="draft-service-form"></div>
                 </div>
-                <button
-                  class="add-btn"
-                  id="client-submit-btn"
-                  onclick="addClient()"
-                >
-                  Αποθήκευση
-                </button>
-                <button
-                  class="add-btn"
-                  id="client-cancel-btn"
-                  style="
-                    background: transparent;
-                    color: var(--ink-soft);
-                    border: 1.5px solid var(--line);
-                  "
-                  onclick="cancelClientEdit()"
-                >
-                  Ακύρωση
-                </button>
-                <button
-                  class="add-btn"
-                  id="client-delete-btn"
-                  style="display:none;background:#b5544a;"
-                  onclick="deleteEditingClient()"
-                >
-                  Διαγραφή
-                </button>
               </div>
             </div>
             <div id="client-success" class="client-success"></div>
@@ -2490,26 +2468,25 @@
       }
       function receiptForPayment(paymentId) {
         return (draftFamilyReceipts || []).find(
-          (receipt) => Number(receipt.paymentId) === Number(paymentId),
+          (receipt) => Number(receipt.paymentId) === Number(paymentId) && receipt.status === "issued",
         ) || null;
       }
       function familyAccountActionHTML(row) {
         if (Number.isInteger(row.serviceIndex)) {
-          return `<button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftService(${row.serviceIndex})">Επεξεργασία</button>`;
+          return "";
         }
         if (!Number.isInteger(row.familyPaymentIndex)) return "";
         const receipt = receiptForPayment(row.paymentId);
         return `<div style="display:flex;gap:8px;align-items:center;white-space:nowrap;">
-          <button type="button" class="del-btn" style="color:var(--olive-dark);" onclick="editDraftPayment(${row.familyPaymentIndex})">Επεξεργασία</button>
           <button type="button" class="del-btn" style="color:var(--gold-dark);font-weight:700;" onclick="issueOrPrintReceipt(${row.familyPaymentIndex})">${receipt ? `Απόδειξη ${escapeHtml(receipt.number)}` : "Έκδοση απόδειξης"}</button>
         </div>`;
       }
       function familyAccountRowEditAttribute(row) {
         if (Number.isInteger(row.serviceIndex)) {
-          return `ondblclick="if(rowRequestsEdit(event)){editDraftService(${row.serviceIndex})}" style="cursor:pointer;" title="Διπλό κλικ για επεξεργασία"`;
+          return `ondblclick="if(rowRequestsEdit(event)){editDraftService(${row.serviceIndex})}" style="cursor:pointer;"`;
         }
         if (Number.isInteger(row.familyPaymentIndex)) {
-          return `ondblclick="if(rowRequestsEdit(event)){editDraftPayment(${row.familyPaymentIndex})}" style="cursor:pointer;" title="Διπλό κλικ για επεξεργασία"`;
+          return `ondblclick="if(rowRequestsEdit(event)){editDraftPayment(${row.familyPaymentIndex})}" style="cursor:pointer;"`;
         }
         return "";
       }
@@ -2549,7 +2526,7 @@
           body{font-family:Arial,sans-serif;color:#222;margin:28px}h3{font-family:Georgia,serif;margin:0 0 10px}.family-account-no-print{display:none}
           table{width:100%;border-collapse:collapse;font-size:10.5px}th{font-size:9.5px;text-transform:uppercase;text-align:left;padding:7px 5px;border-bottom:1px solid #d8ccb7;white-space:nowrap}
           td{padding:8px 5px;border-bottom:1px solid #e5dccb;white-space:nowrap}.money{text-align:right}tfoot td{font-weight:700;border-top:2px solid #d8ccb7}.family-account-print-heading{font-size:11px;margin-bottom:12px}
-        </style></head><body>${area.outerHTML}<script>window.onload=()=>{window.print();window.onafterprint=()=>window.close()}<\/script></body></html>`);
+        </style></head><body>${area.outerHTML}<script>window.onload=()=>{let done=false;const closePrint=()=>{if(!done){done=true;window.close()}};window.onafterprint=closePrint;window.addEventListener('focus',()=>setTimeout(closePrint,250),{once:true});setTimeout(()=>window.print(),100)}<\/script></body></html>`);
         popup.document.close();
       }
       function normalizeReceipt(receipt) {
@@ -2637,7 +2614,7 @@
         const timeText = issued.toLocaleTimeString("el-GR", { hour: "2-digit", minute: "2-digit" });
         popup.document.write(`<!doctype html><html lang="el"><head><meta charset="utf-8"><title>Απόδειξη ${escapeHtml(receipt.number)}</title><style>
           @page{size:A5 portrait;margin:12mm}*{box-sizing:border-box}body{font-family:Georgia,'Times New Roman',serif;color:#34291f;margin:0;background:#fff}.sheet{padding:8px}.head{display:grid;grid-template-columns:1fr auto;gap:20px;padding-bottom:14px;border-bottom:2px solid #c99a43}.brand{font-size:20px;font-weight:700}.sub{font:700 11px Arial,sans-serif;color:#9b6b22;text-transform:uppercase;margin-top:3px;letter-spacing:.04em}.details,.meta{font:11px/1.5 Arial,sans-serif;color:#615548;margin-top:8px}.meta{text-align:right;white-space:nowrap}.title{text-align:center;text-transform:uppercase;letter-spacing:.08em;font-size:21px;margin:22px 0}.row{display:grid;grid-template-columns:140px 1fr;gap:10px;padding:7px 0;border-bottom:1px solid #e6dccb;font-size:13px}.label{font:700 10px Arial,sans-serif;color:#756454;text-transform:uppercase}.amount{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin:18px 0;padding:13px 15px;background:#f5ead7;border-left:4px solid #c99a43}.caption{font:10px Arial,sans-serif;text-transform:uppercase;color:#6f6255}.words{font-size:13px;margin-top:4px}.value{font:700 21px Arial,sans-serif;color:#8f611d}.balances{display:grid;grid-template-columns:1fr 1fr;gap:12px}.balance{border:1px solid #ddd0bc;padding:9px 11px;font:10px Arial,sans-serif}.balance strong{display:block;margin-top:4px;font-size:15px}.note{margin:18px 0 24px;padding:8px;text-align:center;background:#f7f2e9;font:700 9px Arial,sans-serif;text-transform:uppercase;color:#6b5c4e}.sign{display:grid;grid-template-columns:1fr 1fr;gap:45px;margin-top:35px;font:10px Arial,sans-serif;text-align:center}.line{border-top:1px solid #76685b;padding-top:7px}@media print{body{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
-        </style></head><body><div class="sheet"><div class="head"><div><div class="brand">Δαβλάντη Φωτεινή Νικόλαος</div><div class="sub">Γραφείο Τελετών</div><div class="details">Αρχιμήδους 47, Τ.Κ. 16343, Ηλιούπολη<br>ΑΦΜ 072099383</div></div><div class="meta"><strong>Αρ. απόδειξης:</strong> ${escapeHtml(receipt.number)}<br><strong>Ημερομηνία:</strong> ${dateText}<br><strong>Ώρα:</strong> ${timeText}</div></div><h1 class="title">Απόδειξη Είσπραξης</h1><div class="row"><span class="label">Οικογένεια</span><strong>${escapeHtml(receipt.familyName)}</strong></div><div class="row"><span class="label">Θανών / Θανούσα</span><strong>${escapeHtml(receipt.deceasedName || "—")}</strong></div><div class="row"><span class="label">Αιτιολογία</span><span>${escapeHtml(receipt.reason)}</span></div><div class="row"><span class="label">Τρόπος πληρωμής</span><span>${escapeHtml(receipt.method)}</span></div><div class="amount"><div><div class="caption">Λάβαμε το ποσό</div><div class="words">${escapeHtml(amountInGreekWords(receipt.amount))}</div></div><div class="value">${fmtEuro(receipt.amount)}</div></div><div class="balances"><div class="balance">Υπόλοιπο πριν την πληρωμή<strong>${fmtEuro(receipt.previousBalance)}</strong></div><div class="balance">Νέο υπόλοιπο<strong>${fmtEuro(receipt.newBalance)}</strong></div></div><div class="note">Η παρούσα αποτελεί απλή απόδειξη είσπραξης και δεν αποτελεί φορολογικό στοιχείο.</div><div class="sign"><div class="line">Ο καταβάλλων</div><div class="line">Για το γραφείο τελετών</div></div></div><script>window.onload=()=>{window.print();window.onafterprint=()=>window.close()}<\/script></body></html>`);
+        </style></head><body><div class="sheet"><div class="head"><div><div class="brand">Δαβλάντη Φωτεινή Νικόλαος</div><div class="sub">ΓΡΑΦΕΙΟ ΤΕΛΕΤΩΝ</div><div class="details">Αρχιμήδους 47, Τ.Κ. 16343, Ηλιούπολη<br>ΑΦΜ 072099383</div></div><div class="meta"><strong>Αρ. απόδειξης:</strong> ${escapeHtml(receipt.number)}<br><strong>Ημερομηνία:</strong> ${dateText}<br><strong>Ώρα:</strong> ${timeText}</div></div><h1 class="title">ΑΠΟΔΕΙΞΗ ΕΙΣΠΡΑΞΗΣ</h1><div class="row"><span class="label">ΟΙΚΟΓΕΝΕΙΑ</span><strong>${escapeHtml(receipt.familyName)}</strong></div><div class="row"><span class="label">ΘΑΝΩΝ / ΘΑΝΟΥΣΑ</span><strong>${escapeHtml(receipt.deceasedName || "—")}</strong></div><div class="row"><span class="label">ΑΙΤΙΟΛΟΓΙΑ</span><span>${escapeHtml(receipt.reason)}</span></div><div class="row"><span class="label">ΤΡΟΠΟΣ ΠΛΗΡΩΜΗΣ</span><span>${escapeHtml(receipt.method)}</span></div><div class="amount"><div><div class="caption">ΛΑΒΑΜΕ ΤΟ ΠΟΣΟ</div><div class="words">${escapeHtml(amountInGreekWords(receipt.amount))}</div></div><div class="value">${fmtEuro(receipt.amount)}</div></div><div class="balances"><div class="balance">Υπόλοιπο πριν την πληρωμή<strong>${fmtEuro(receipt.previousBalance)}</strong></div><div class="balance">Νέο υπόλοιπο<strong>${fmtEuro(receipt.newBalance)}</strong></div></div><div class="note">Η ΠΑΡΟΥΣΑ ΑΠΟΤΕΛΕΙ ΑΠΛΗ ΑΠΟΔΕΙΞΗ ΕΙΣΠΡΑΞΗΣ ΚΑΙ ΔΕΝ ΑΠΟΤΕΛΕΙ ΦΟΡΟΛΟΓΙΚΟ ΣΤΟΙΧΕΙΟ.</div><div class="sign"><div class="line">Ο καταβάλλων</div><div class="line">Για το γραφείο τελετών</div></div></div><script>window.onload=()=>{let done=false;const closePrint=()=>{if(!done){done=true;window.close()}};window.onafterprint=closePrint;window.addEventListener('focus',()=>setTimeout(closePrint,250),{once:true});setTimeout(()=>window.print(),100)}<\/script></body></html>`);
         popup.document.close();
       }
       async function renderReceiptArchive() {
@@ -2781,11 +2758,6 @@
         renderDraftServices();
       }
       function editDraftPayment(index) {
-        const payment = draftFamilyPayments[index];
-        if (payment && receiptForPayment(payment.id)) {
-          alert("Η πληρωμή έχει εκδοθεί σε απόδειξη και δεν μπορεί να τροποποιηθεί. Η διαδικασία ακύρωσης απόδειξης θα προστεθεί σε επόμενη έκδοση.");
-          return;
-        }
         draftServiceEditingIndex = null;
         draftPaymentEditingIndex = index;
         draftPaymentFormOpen = true;
@@ -2828,6 +2800,13 @@
         const previous = Number.isInteger(draftPaymentEditingIndex)
           ? draftFamilyPayments[draftPaymentEditingIndex]
           : null;
+        const existingReceipt = previous ? receiptForPayment(previous.id) : null;
+        const paymentChanged = !!previous && (
+          String(previous.date || "").slice(0, 16) !== String(datetime).slice(0, 16) ||
+          Number(previous.amount || 0) !== Number(amount) ||
+          String(previous.method || "Μετρητά") !== String(method)
+        );
+        if (existingReceipt && paymentChanged && !confirm(`Η πληρωμή συνδέεται με την απόδειξη ${existingReceipt.number}. Με την αποθήκευση η παλιά απόδειξη θα σημειωθεί ως ακυρωμένη και θα χρειαστεί να εκδοθεί νέα. Να συνεχίσουμε;`)) return;
         const savedPayment = {
           id: previous ? previous.id : Date.now(),
           date: datetime,
@@ -2836,19 +2815,27 @@
           method,
         };
         if (editingClientId !== null) {
-          const { error } = await sb.from("service_payments").upsert({
-            id: Number(savedPayment.id),
-            family_id: Number(editingClientId),
-            service_id: null,
-            payment_date: savedPayment.date,
-            amount: Number(savedPayment.amount),
-            reason: savedPayment.reason,
-            payment_method: savedPayment.method,
-          }, { onConflict: "id" });
+          const { error } = existingReceipt && paymentChanged
+            ? await sb.rpc("revise_receipted_payment", {
+                p_payment_id: Number(savedPayment.id),
+                p_payment_date: savedPayment.date,
+                p_amount: Number(savedPayment.amount),
+                p_payment_method: savedPayment.method,
+              })
+            : await sb.from("service_payments").upsert({
+                id: Number(savedPayment.id),
+                family_id: Number(editingClientId),
+                service_id: null,
+                payment_date: savedPayment.date,
+                amount: Number(savedPayment.amount),
+                reason: savedPayment.reason,
+                payment_method: savedPayment.method,
+              }, { onConflict: "id" });
           if (error) {
             showClientError("Η πληρωμή δεν αποθηκεύτηκε.");
             return;
           }
+          if (existingReceipt && paymentChanged) existingReceipt.status = "cancelled";
         }
         if (previous) draftFamilyPayments[draftPaymentEditingIndex] = savedPayment;
         else draftFamilyPayments.push(savedPayment);
